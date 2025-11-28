@@ -17,11 +17,11 @@ export interface UserModel extends BaseModel {
   role: Identifier,
   status: UserStatus,
   language: Language,
-  companyIds: Identifier[],
   deleted: boolean,
   deletedAt?: Date,
   lastLoggedInAt?: Date,
   refreshToken?: string,
+  registeredAt: Date,
 }
 
 export class User extends BaseEntity<UserModel> {
@@ -96,12 +96,6 @@ export class User extends BaseEntity<UserModel> {
   public set language(value: Language){
     this.model.language = value;
   }
-  public get companyIds(): Identifier[] {
-    return this.model.companyIds || [];
-  }
-  public set companyIds(value: Identifier[]) {
-    this.model.companyIds = value || [];
-  }
 
   public get deleted(): boolean {
     return this.model.deleted;
@@ -125,6 +119,14 @@ export class User extends BaseEntity<UserModel> {
 
   public set lastLoggedInAt(value: Date | undefined){
     this.model.lastLoggedInAt = value;
+  }
+
+  public get registeredAt(): Date {
+    return this.model.registeredAt;
+  }
+
+  public set registeredAt(value: Date){
+    this.model.registeredAt = value;
   }
 
   public get refreshToken(): string | undefined {

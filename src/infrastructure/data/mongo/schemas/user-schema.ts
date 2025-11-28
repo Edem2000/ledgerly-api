@@ -47,18 +47,14 @@ export const UserSchema: BaseSchema<UserModel> = new BaseSchema(
       required: true,
       enum: UserStatuses,
     },
-    companyIds: [{
-      type: Types.ObjectId,
-      get: objectIdToIdentifier as (value: any) => Identifier,
-      set: identifierToObjectId,
-      required: false,
-      default: [],
-    }],
     deleted: {
       type: Boolean,
       required: true,
     },
     deletedAt: {
+      type: Date,
+    },
+    registeredAt: {
       type: Date,
     },
     lastLoggedInAt: {

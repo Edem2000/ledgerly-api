@@ -54,12 +54,7 @@ import { SearchUsersDto } from 'infrastructure/controllers/dtos/users/search-use
 import { ChangePasswordDto } from 'infrastructure/controllers/dtos/users/change-password-dto';
 import { ChangePasswordUsecase } from 'usecases/auth/change-password-usecase';
 import { ChangePasswordPresenter } from 'infrastructure/controllers/presenters/users/change-passsword-presenter';
-import { AssignCompanyToUserUsecase } from 'usecases/users/assign-company-to-user-usecase';
-import { AssignCompanyToUserDto } from 'infrastructure/controllers/dtos/users/assign-company-to-user-dto';
 import { CurrentUserProvider } from 'infrastructure/utils/current-user-provider';
-import { BasePresenter, BaseResponseDto } from 'infrastructure/controllers/presenters/_common/base-presenter';
-import { UnassignCompanyFromUserDto } from 'infrastructure/controllers/dtos/users/unassign-company-from-user-dto';
-import { UnassignCompanyFromUserUsecase } from 'usecases/users/unassign-company-from-user-usecase';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('users')
@@ -81,20 +76,15 @@ export class UserController {
     private readonly deleteUserUsecase: DeleteUserUsecase,
     @Inject(Symbols.usecases.users.updateUser)
     private readonly updateUserUsecase: UpdateUserUsecase,
-    @Inject(Symbols.usecases.users.assignCompany)
-    private readonly assignCompanyToUserUsecase: AssignCompanyToUserUsecase,
-    @Inject(Symbols.usecases.users.unassignCompany)
-    private readonly unassignCompanyFromUserUsecase: UnassignCompanyFromUserUsecase,
 
     @Inject(Symbols.infrastructure.providers.currentUser)
     private readonly currentUser: CurrentUserProvider,
   ) {}
 
   @Post('/register')
-  @AllowRoles(RoleAlias.SuperAdmin, RoleAlias.Admin)
+  @Public()
   public async register(@Body() params: RegisterUserDto): Promise<RegisterResponseDto> {
     try {
-      const currentUser = await this.currentUser.get();
       const context = this.currentUser.getContext();
 
       const createParams = {
@@ -109,7 +99,7 @@ export class UserController {
         role: params.role,
       };
 
-      const { user, role } =  await this.createUserUsecase.execute(createParams, currentUser, context);
+      const { user, role } =  await this.createUserUsecase.execute(createParams, undefined, context);
 
       return RegisterPresenter.present(user, role);
     } catch (error) {
@@ -157,7 +147,7 @@ export class UserController {
 
   @HttpCode(HttpStatus.OK)
   @Get('/search')
-  @AllowRoles(RoleAlias.SuperAdmin, RoleAlias.Admin)
+  @Public()
   @UsePipes(PaginationPipe)
   public async search(@Query() query: SearchUsersDto): Promise<GetUsersResponseDto> {
     try {
@@ -177,7 +167,7 @@ export class UserController {
 
   @HttpCode(HttpStatus.OK)
   @Get()
-  @AllowRoles(RoleAlias.SuperAdmin, RoleAlias.Admin)
+  @Public()
   @UsePipes(PaginationPipe)
   public async getUsers(@Query() query: GetUsersDto): Promise<GetUsersResponseDto> {
     try {
@@ -199,7 +189,7 @@ export class UserController {
 
   @HttpCode(HttpStatus.OK)
   @Get(':id')
-  @AllowRoles(RoleAlias.SuperAdmin, RoleAlias.Admin)
+  @Public()
   public async getUser(@Param() params: GetUserDto): Promise<GetUserResponseDto> {
     try {
       const id = new EntityId(params.id)
@@ -214,7 +204,7 @@ export class UserController {
 
   @HttpCode(HttpStatus.OK)
   @Delete(':id')
-  @AllowRoles(RoleAlias.SuperAdmin, RoleAlias.Admin)
+  @Public()
   public async deleteUser(@Param() params: DeleteUserDto): Promise<DeleteUserResponseDto> {
     try {
       const currentUser = await this.currentUser.get();
@@ -231,7 +221,7 @@ export class UserController {
 
   @HttpCode(HttpStatus.OK)
   @Patch(':id')
-  @AllowRoles(RoleAlias.SuperAdmin, RoleAlias.Admin)
+  @Public()
   public async updateUser(@Param('id') id: string, @Body() params: UpdateUserDto): Promise<UpdateUserResponseDto> {
     try {
       const context = this.currentUser.getContext();
@@ -252,46 +242,6 @@ export class UserController {
       const { user, role} = await this.updateUserUsecase.execute(updateParams, currentUser, context);
 
       return UpdateUserPresenter.present(user, role);
-    } catch (error) {
-      throw getExceptionByError(error);
-    }
-  }
-
-  @HttpCode(HttpStatus.OK)
-  @Patch(':id/companies/assign')
-  @AllowRoles(RoleAlias.SuperAdmin, RoleAlias.Admin)
-  public async assignCompanyToUser(@Param('id') id: string, @Body() params: AssignCompanyToUserDto): Promise<BaseResponseDto> {
-    const currentUser = await this.currentUser.get();
-    const context = this.currentUser.getContext();
-    try {
-      const updateParams = {
-        userId: new EntityId(id),
-        companyId: new EntityId(params.companyId),
-      };
-
-      const { success } = await this.assignCompanyToUserUsecase.execute(updateParams, currentUser, context);
-
-      return BasePresenter.present(success);
-    } catch (error) {
-      throw getExceptionByError(error);
-    }
-  }
-
-  @HttpCode(HttpStatus.OK)
-  @Patch(':id/companies/unassign')
-  @AllowRoles(RoleAlias.SuperAdmin, RoleAlias.Admin)
-  public async unassignCompanyFromUser(@Param('id') id: string, @Body() params: UnassignCompanyFromUserDto): Promise<BaseResponseDto> {
-    const currentUser = await this.currentUser.get();
-    const context = this.currentUser.getContext();
-    try {
-      const updateParams = {
-        userId: new EntityId(id),
-        companyId: new EntityId(params.companyId),
-      };
-
-      const { success } = await this.unassignCompanyFromUserUsecase.execute(updateParams, currentUser, context);
-
-      return BasePresenter.present(success);
     } catch (error) {
       throw getExceptionByError(error);
     }

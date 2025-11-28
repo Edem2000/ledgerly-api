@@ -3,7 +3,7 @@ import { UserSortField } from 'domain/user/user-sort';
 import { UserStatus } from 'domain/user/user-state';
 import { DeepPartial } from 'domain/utils/type-helpers';
 
-export type CreateParams = Omit<UserModel, 'status' | 'lastLoggedInAt' | 'deleted' | 'companyIds'>;
+export type CreateParams = Omit<UserModel, 'status' | 'lastLoggedInAt' | 'deleted' | 'registeredAt'>;
 export type UpdateParams = DeepPartial<Omit<UserModel, 'status' | 'lastLoggedInAt' | 'deleted' | 'password' | 'role'>>;
 
 export type LoginParams = {

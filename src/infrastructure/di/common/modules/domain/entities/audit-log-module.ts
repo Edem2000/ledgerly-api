@@ -54,8 +54,6 @@ import { UserModule } from 'di/common/modules/domain/entities/user-module';
       },
       inject: [
         Symbols.domain.user.userRepository,
-        Symbols.domain.company.companyRepository,
-        Symbols.domain.product.productRepository,
       ],
     },
   ],

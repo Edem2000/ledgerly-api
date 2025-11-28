@@ -76,7 +76,6 @@ export class ChangePasswordUsecaseImpl implements ChangePasswordUsecase {
       email: user.email,
       phone: user.phone,
       language: user.language,
-      companyIds: user.companyIds,
       roleId: role.id.toString(),
       roleAlias: role.alias,
     };

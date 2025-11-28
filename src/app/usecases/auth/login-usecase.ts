@@ -50,7 +50,6 @@ export class LoginUsecaseImpl implements LoginUsecase {
       email: user.email,
       phone: user.phone,
       language: user.language,
-      companyIds: user.companyIds,
       roleId: role.id.toString(),
       roleAlias: role.alias,
     };

@@ -4,7 +4,7 @@ import { Context, Language } from 'domain/_core';
 import { RoleService } from 'domain/role/service/service';
 import { User } from 'domain/user/user';
 import { RoleNotFoundError, UserExistsError } from 'domain/utils/errors';
-import { Role } from 'domain/role/role';
+import { Role, RoleAlias } from 'domain/role/role';
 import { CurrentUser } from 'domain/_utils/auth/types';
 import { AuditLogService, AuditType, TargetEntity } from 'domain/audit';
 
@@ -58,7 +58,7 @@ export class CreateUserUsecaseImpl implements CreateUserUsecase {
 
     await this.auditLogService.log({
       type: AuditType.UserRegistration,
-      actorUserId: currentUser.id,
+      actorUserId: currentUser?.id,
       targetEntity: TargetEntity.User,
       targetId: user.id,
       metadata: {

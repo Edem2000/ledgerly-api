@@ -2,7 +2,7 @@ import { RoleAlias } from 'domain/role/role';
 import { HexString } from 'domain/_core';
 import { UserModel } from 'domain/user';
 
-export type CurrentUser = Pick<UserModel, 'name' | 'email' | 'companyIds' | 'phone' | 'language'> & {
+export type CurrentUser = Pick<UserModel, 'name' | 'email' | 'phone' | 'language'> & {
   id: HexString,
   roleId: HexString,
   roleAlias: RoleAlias,

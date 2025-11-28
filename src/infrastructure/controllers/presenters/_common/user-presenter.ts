@@ -11,7 +11,6 @@ export class UserPresenter {
       email: user.email,
       phone: user.phone,
       status: user.status,
-      companyIds: user.companyIds.map(companyId => companyId.toString()),
       role: role ? {
         id: role.id.toString(),
         name: role.name,
@@ -30,7 +29,6 @@ export type UserResponseDto = {
   email: string,
   phone: string,
   status: string,
-  companyIds: HexString[],
   role?: {
     id: HexString,
     name: {

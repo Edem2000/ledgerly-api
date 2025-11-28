@@ -1,4 +1,5 @@
 import { BaseEntity, BaseModel, MultiLanguage } from 'domain/_core';
+import { User } from 'domain/user';
 
 export interface RoleModel extends BaseModel {
   name: MultiLanguage;
@@ -24,6 +25,7 @@ export class Role extends BaseEntity<RoleModel> {
 }
 
 export const RoleAlias = {
+  User: 'user',
   SuperAdmin: 'superadmin',
   Admin: 'admin',
   Operator: 'operator'

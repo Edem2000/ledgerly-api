@@ -57,6 +57,15 @@ export class RolesCollection {
   public data(): Role[] {
     return [
       new Role({
+        id: new EntityId('692a136383237561feac659b'),
+        name: {
+          ru: 'Пользователь',
+          uz: 'User',
+          en: 'User',
+        },
+        alias: RoleAlias.User,
+      }),
+      new Role({
         id: new EntityId('680aa6d4588a0511ca60a3ef'),
         name: {
           ru: 'Суперадмин',

@@ -16,14 +16,6 @@ import { CurrentUserModule } from 'di/common/modules/domain/entities/current-use
 import { CurrentUserService } from 'domain/session';
 import { GetMeUsecase, GetMeUsecaseImpl } from 'usecases/auth/get-me-usecase';
 import { ChangePasswordUsecase, ChangePasswordUsecaseImpl } from 'usecases/auth/change-password-usecase';
-import {
-  AssignCompanyToUserUsecase,
-  AssignCompanyToUserUsecaseImpl,
-} from 'usecases/users/assign-company-to-user-usecase';
-import {
-  UnassignCompanyFromUserUsecase,
-  UnassignCompanyFromUserUsecaseImpl,
-} from 'usecases/users/unassign-company-from-user-usecase';
 import { AuditLogService } from 'domain/audit';
 import { AuditLogModule } from 'di/common/modules/domain/entities/audit-log-module';
 
@@ -171,40 +163,6 @@ import { AuditLogModule } from 'di/common/modules/domain/entities/audit-log-modu
         Symbols.domain.auditLog.auditLogService,
       ],
     },
-    {
-      provide: Symbols.usecases.users.assignCompany,
-      useFactory(
-        userService: UserService,
-        roleService: RoleService,
-        currentUserService: CurrentUserService,
-        auditLogService: AuditLogService,
-      ): AssignCompanyToUserUsecase {
-        return new AssignCompanyToUserUsecaseImpl(userService, roleService, currentUserService, auditLogService);
-      },
-      inject: [
-        Symbols.domain.user.userService,
-        Symbols.domain.role.roleService,
-        Symbols.domain.currentUser.currentUserService,
-        Symbols.domain.auditLog.auditLogService,
-      ],
-    },
-    {
-      provide: Symbols.usecases.users.unassignCompany,
-      useFactory(
-        userService: UserService,
-        roleService: RoleService,
-        currentUserService: CurrentUserService,
-        auditLogService: AuditLogService,
-      ): UnassignCompanyFromUserUsecase {
-        return new UnassignCompanyFromUserUsecaseImpl(userService, roleService, currentUserService, auditLogService);
-      },
-      inject: [
-        Symbols.domain.user.userService,
-        Symbols.domain.role.roleService,
-        Symbols.domain.currentUser.currentUserService,
-        Symbols.domain.auditLog.auditLogService,
-      ],
-    },
   ],
   exports: [
     Symbols.usecases.users.createUser,
@@ -215,8 +173,6 @@ import { AuditLogModule } from 'di/common/modules/domain/entities/audit-log-modu
     Symbols.usecases.users.getOne,
     Symbols.usecases.users.deleteUser,
     Symbols.usecases.users.updateUser,
-    Symbols.usecases.users.assignCompany,
-    Symbols.usecases.users.unassignCompany,
     Symbols.usecases.users.search,
   ],
 })

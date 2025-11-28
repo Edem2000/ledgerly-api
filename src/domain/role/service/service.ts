@@ -18,7 +18,7 @@ export class RoleServiceImpl extends BaseService implements RoleService {
   }
 
   public async findByAlias(alias: string): Promise<Role | null> {
-    return await this.repository.findByAlias(alias);
+    return await this.repository.findByAlias(alias as RoleAlias);
   }
 
   public async findById(id: Identifier): Promise<Role | null> {

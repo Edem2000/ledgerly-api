@@ -25,9 +25,6 @@ export interface UserService {
   deleteById(id: Identifier): Promise<void>;
   update(user: User, params: UpdateParams): Promise<User>;
   findByEmail(email: string): Promise<User | null>;
-  assignCompanies(user: User, companyIds: Identifier[]): Promise<User>;
-  unassignCompanies(user: User, companyIds: Identifier[]): Promise<User>;
-  assignCompaniesToUsersWithRoles(roles: Identifier[], companyIds: Identifier[]): Promise<void>;
 }
 
 export class UserServiceImpl extends BaseService implements UserService {
@@ -44,7 +41,7 @@ export class UserServiceImpl extends BaseService implements UserService {
       password: this.hasher.hashPassword(params.password),
       status: UserStatus.Active,
       deleted: false,
-      companyIds: [],
+      registeredAt: new Date(),
     });
     return await this.repository.create(user);
   }
@@ -118,30 +115,5 @@ export class UserServiceImpl extends BaseService implements UserService {
 
   public async save(entity: User): Promise<User> {
     return await this.repository.save(entity);
-  }
-
-  public async assignCompanies(user: User, companyIds: Identifier[]): Promise<User> {
-    companyIds.forEach(companyId => {
-      user.companyIds.push(companyId);
-    })
-    return await this.save(user);
-  }
-
-  public async unassignCompanies(user: User, companyIds: Identifier[]): Promise<User> {
-    return await this.repository.updateById( user.id, {
-      $pullAll: {
-        companyIds: companyIds.map(id => id.toString())
-      }
-    }) as User;
-  }
-
-  public async assignCompaniesToUsersWithRoles(roles: Identifier[], companyIds: Identifier[]): Promise<void> {
-    await this.repository.updateMany({ role: {$in: roles} }, {
-      $addToSet: {
-        companyIds: {
-          $each: companyIds.map(id => id.toString())
-        }
-      }
-    });
   }
 }

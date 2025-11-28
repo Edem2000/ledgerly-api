@@ -37,7 +37,6 @@ export class CurrentUserServiceImpl implements CurrentUserService {
       email: user.email,
       phone: user.phone,
       language: user.language,
-      companyIds: user.companyIds,
       roleId: role?.id.toString() || cached?.roleId!,
       roleAlias: role?.alias || cached?.roleAlias!,
     };
