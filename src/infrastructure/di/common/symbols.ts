@@ -18,7 +18,7 @@ export const Symbols = generateSymbols({
     user: asUniqueArray(['userRepository', 'userService'] as const),
     currentUser: asUniqueArray(['currentUserRepository', 'currentUserService'] as const),
     role: asUniqueArray(['roleRepository', 'roleService'] as const),
-    company: asUniqueArray(['companyRepository', 'companyService'] as const),
+    category: asUniqueArray(['categoryRepository', 'categoryService'] as const),
     product: asUniqueArray(['productRepository', 'productService'] as const),
     upload: asUniqueArray(['uploadRepository', 'uploadService'] as const),
     stats: asUniqueArray(['statsService'] as const),
@@ -47,17 +47,7 @@ export const Symbols = generateSymbols({
 
 export const CollectionNames = {
   users: 'users',
-  companies: 'companies',
-  products: 'products',
-  uploads: 'uploads',
+  categories: 'categories',
   stateHistory: 'state_history',
   auditLogs: 'audit_logs',
-
-  reference: {
-    cisType: 'reference_cis_type',
-    countryCode: 'reference_country_code',
-    productGroup: 'reference_product_group',
-    releaseMethodType: 'reference_release_method_type',
-    serialNumberType: 'reference_serial_number_type',
-  }
 };
