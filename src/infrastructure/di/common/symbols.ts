@@ -11,7 +11,7 @@ export const Symbols = generateSymbols({
       'keyGenerator',
     ] as const),
     jwt: asUniqueArray(['jwtService', 'jwtStrategy'] as const),
-    utils: asUniqueArray(['hasher'] as const),
+    utils: asUniqueArray(['hasher', 'slug', 'translate'] as const),
     providers: asUniqueArray(['currentUser'] as const),
   },
   domain: {
@@ -34,7 +34,7 @@ export const Symbols = generateSymbols({
   },
   usecases: {
     users: asUniqueArray(['login', 'getMe', 'createUser', 'get', 'getOne', 'deleteUser', 'updateUser', 'assignCompany', 'unassignCompany', 'search', 'changePassword'] as const),
-    companies: asUniqueArray(['create', 'get', 'getOne', 'delete', 'update', 'search'] as const),
+    categories: asUniqueArray(['create', 'get', 'getOne', 'delete', 'update', 'search'] as const),
     products: asUniqueArray(['create', 'get', 'getOne', 'delete', 'update', 'search'] as const),
     uploads: asUniqueArray(['create', 'get', 'getOne', 'delete'] as const),
     auditLogs: asUniqueArray(['get', 'getOne'] as const),

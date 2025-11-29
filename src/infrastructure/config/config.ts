@@ -10,6 +10,7 @@ type GeneralConfig = {
     connectionString: string,
   },
   jwt: JwtConfig,
+  yandexTranslate: YandexTranslateConfig,
 };
 
 export type JwtConfig = {
@@ -17,6 +18,12 @@ export type JwtConfig = {
   accessTtl: string,
   refreshTtl: string,
   userCacheTtl: number,
+};
+
+export type YandexTranslateConfig = {
+  apiUrl: string,
+  apiKey: string,
+  folderId: string,
 };
 
 export const config: GeneralConfig = {
@@ -30,4 +37,9 @@ export const config: GeneralConfig = {
     refreshTtl: envVars.JWT_REFRESH_TTL || '7d',
     userCacheTtl: +(envVars.USER_CACHE_TTL || 120) // 2 mins in seconds
   },
+  yandexTranslate: {
+    apiUrl: envVars.YANDEX_API_URL || '',
+    apiKey: envVars.YANDEX_API_KEY || '',
+    folderId: envVars.YANDEX_FOLDER_ID || '',
+  }
 };

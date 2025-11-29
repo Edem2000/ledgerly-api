@@ -6,10 +6,13 @@ import { JwtAuthGuard } from 'infrastructure/services/guards/auth-guard';
 import { ProvidersModule } from 'di/common/modules/infrastructure/providers';
 import { AuditLogController } from 'infrastructure/controllers/audit-log-controller';
 import { AuditLogUsecasesModule } from 'di/common/modules/domain/usecases/audit-logs-usecases-module';
+import { CategoryUsecasesModule } from 'di/common/modules/domain/usecases/category-usecases-module';
+import { CategoryController } from 'infrastructure/controllers/category-controller';
 
 @Module({
   imports: [
     UserUsecasesModule,
+    CategoryUsecasesModule,
     AuditLogUsecasesModule,
     AuthModule,
     ProvidersModule,
@@ -23,6 +26,7 @@ import { AuditLogUsecasesModule } from 'di/common/modules/domain/usecases/audit-
   ],
   controllers: [
     UserController,
+    CategoryController,
     AuditLogController,
   ],
 })

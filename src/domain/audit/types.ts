@@ -3,7 +3,7 @@ import { MultiLanguage } from 'domain/_core';
 export const AuditCategory = {
   Auth: 'auth',
   User: 'user',
-  Product: 'product',
+  Category: 'category',
   Company: 'company',
 } as const;
 
@@ -19,7 +19,7 @@ export const AuditType = {
   AssignCompanyToUser: 'assignCompanyToUser',
   UnassignCompanyFromUser: 'unassignCompanyFromUser',
 
-  ProductCreate: 'productCreate',
+  CategoryCreate: 'categoryCreate',
   ProductUpdate: 'productUpdate',
   ProductDelete: 'productDelete',
 
@@ -43,9 +43,9 @@ export const categoryByType: Record<AuditType, AuditCategory> = {
   [AuditType.AssignCompanyToUser]: AuditCategory.User,
   [AuditType.UnassignCompanyFromUser]: AuditCategory.User,
 
-  [AuditType.ProductCreate]: AuditCategory.Product,
-  [AuditType.ProductUpdate]: AuditCategory.Product,
-  [AuditType.ProductDelete]: AuditCategory.Product,
+  [AuditType.CategoryCreate]: AuditCategory.Category,
+  [AuditType.ProductUpdate]: AuditCategory.Category,
+  [AuditType.ProductDelete]: AuditCategory.Category,
 
   [AuditType.CompanyCreate]: AuditCategory.Company,
   [AuditType.CompanyUpdate]: AuditCategory.Company,
@@ -94,10 +94,10 @@ export const messageByType: Record<AuditType, MultiLanguage> = {
     en: 'Company unassigned from user successfully',
   },
 
-  [AuditType.ProductCreate]: {
-    ru: 'Продукт успешно создан',
-    uz: 'Mahsulot muvaffaqiyatli yaratildi',
-    en: 'Product created successfully',
+  [AuditType.CategoryCreate]: {
+    ru: 'Категория успешно создана',
+    uz: 'Kategoriya muvaffaqiyatli yaratildi',
+    en: 'Category created successfully',
   },
   [AuditType.ProductUpdate]: {
     ru: 'Продукт успешно обновлен',
@@ -136,6 +136,7 @@ export type Actor = typeof Actor[keyof typeof Actor];
 
 export const TargetEntity = {
   User: "user",
+  Category: "category",
 } as const;
 
 export type TargetEntity = typeof TargetEntity[keyof typeof TargetEntity];

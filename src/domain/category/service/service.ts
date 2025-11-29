@@ -37,6 +37,7 @@ export class CategoryServiceImpl
     const category = new Category({
       ...params,
       status: CategoryStatus.Active,
+      deleted: false,
     });
     return await this.repository.create(category);
   }
