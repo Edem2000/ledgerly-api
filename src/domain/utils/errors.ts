@@ -43,13 +43,13 @@ export class InvalidCredentialsError extends CustomError {
   }
 }
 
-export class CompanyNotFoundError extends CustomError {
+export class CategoryAlreadyExistsError extends CustomError {
   constructor() {
     super({
-      ru: "Компания не найдена",
-      uz: "Компания не найдена",
-      en: "Company not found",
-    }, 10003, HttpStatus.NOT_FOUND);
+      ru: "Категория уже существует",
+      uz: "Категория уже существует",
+      en: "Category already exists",
+    }, 10003, HttpStatus.BAD_REQUEST);
   }
 }
 

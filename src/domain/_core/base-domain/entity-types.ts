@@ -1,9 +1,7 @@
 const EntityType = [
     'user',
-    'company',
-    'product',
+    'category',
     'role',
-    'upload',
     'auditLog',
 ] as const;
 export type EntityType = (typeof EntityType)[number];

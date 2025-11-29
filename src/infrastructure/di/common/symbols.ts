@@ -11,14 +11,14 @@ export const Symbols = generateSymbols({
       'keyGenerator',
     ] as const),
     jwt: asUniqueArray(['jwtService', 'jwtStrategy'] as const),
-    utils: asUniqueArray(['hasher'] as const),
+    utils: asUniqueArray(['hasher', 'slug', 'translate'] as const),
     providers: asUniqueArray(['currentUser'] as const),
   },
   domain: {
     user: asUniqueArray(['userRepository', 'userService'] as const),
     currentUser: asUniqueArray(['currentUserRepository', 'currentUserService'] as const),
     role: asUniqueArray(['roleRepository', 'roleService'] as const),
-    company: asUniqueArray(['companyRepository', 'companyService'] as const),
+    category: asUniqueArray(['categoryRepository', 'categoryService'] as const),
     product: asUniqueArray(['productRepository', 'productService'] as const),
     upload: asUniqueArray(['uploadRepository', 'uploadService'] as const),
     stats: asUniqueArray(['statsService'] as const),
@@ -34,7 +34,7 @@ export const Symbols = generateSymbols({
   },
   usecases: {
     users: asUniqueArray(['login', 'getMe', 'createUser', 'get', 'getOne', 'deleteUser', 'updateUser', 'assignCompany', 'unassignCompany', 'search', 'changePassword'] as const),
-    companies: asUniqueArray(['create', 'get', 'getOne', 'delete', 'update', 'search'] as const),
+    categories: asUniqueArray(['create', 'get', 'getOne', 'delete', 'update', 'search'] as const),
     products: asUniqueArray(['create', 'get', 'getOne', 'delete', 'update', 'search'] as const),
     uploads: asUniqueArray(['create', 'get', 'getOne', 'delete'] as const),
     auditLogs: asUniqueArray(['get', 'getOne'] as const),
@@ -47,17 +47,7 @@ export const Symbols = generateSymbols({
 
 export const CollectionNames = {
   users: 'users',
-  companies: 'companies',
-  products: 'products',
-  uploads: 'uploads',
+  categories: 'categories',
   stateHistory: 'state_history',
   auditLogs: 'audit_logs',
-
-  reference: {
-    cisType: 'reference_cis_type',
-    countryCode: 'reference_country_code',
-    productGroup: 'reference_product_group',
-    releaseMethodType: 'reference_release_method_type',
-    serialNumberType: 'reference_serial_number_type',
-  }
 };

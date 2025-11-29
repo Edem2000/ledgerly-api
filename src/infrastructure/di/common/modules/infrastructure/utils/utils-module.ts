@@ -2,6 +2,11 @@ import { Module } from '@nestjs/common';
 import { Symbols } from 'di/common';
 import { HasherImpl } from 'infrastructure/utils/hash';
 import { Hasher } from 'domain/_utils/auth/types';
+import { SlugService } from 'domain/_utils/slug';
+import { SlugServiceImpl } from 'infrastructure/services/slug';
+import { config } from 'infrastructure/config/config';
+import { TranslateService } from 'domain/_utils/translate';
+import { YandexTranslateService } from 'infrastructure/services/translate';
 
 @Module({
   providers: [
@@ -11,8 +16,20 @@ import { Hasher } from 'domain/_utils/auth/types';
         return new HasherImpl();
       },
     },
+    {
+      provide: Symbols.infrastructure.utils.slug,
+      useFactory(): SlugService {
+        return new SlugServiceImpl();
+      },
+    },
+    {
+      provide: Symbols.infrastructure.utils.translate,
+      useFactory(): TranslateService {
+        return new YandexTranslateService(config.yandexTranslate);
+      },
+    },
   ],
-  exports: [Symbols.infrastructure.utils.hasher ],
+  exports: [Symbols.infrastructure.utils.hasher, Symbols.infrastructure.utils.slug, Symbols.infrastructure.utils.translate ],
 })
 
 export class UtilsModule {}

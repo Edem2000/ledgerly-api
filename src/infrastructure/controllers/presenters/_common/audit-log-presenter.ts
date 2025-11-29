@@ -3,6 +3,11 @@ import { HexString } from 'domain/_core';
 import { User } from 'domain/user';
 import { UserPresenter, UserResponseDto } from 'infrastructure/controllers/presenters/_common/user-presenter';
 import { MultilingualStringDto } from 'infrastructure/controllers/dtos/common/multilanguage-dto';
+import { Category } from 'domain/category';
+import {
+  CategoryPresenter,
+  CategoryResponseDto,
+} from 'infrastructure/controllers/presenters/_common/category-presenter';
 
 export class AuditLogPresenter {
   public static present(enrichedAuditLog: EnrichedAuditLog): AuditLogResponseDto {
@@ -42,6 +47,7 @@ export class AuditLogPresenter {
 
     const presenterStrategy = {
       [TargetEntity.User]: (user: User) => UserPresenter.present(user),
+      [TargetEntity.Category]: (category: Category) => CategoryPresenter.present(category),
     } satisfies {
       [K in TargetEntity]: (x: TargetMap[K]) => TargetResponseMap[K];
     };
@@ -54,13 +60,15 @@ export class AuditLogPresenter {
 
 type TargetMap = {
   [TargetEntity.User]: User;
+  [TargetEntity.Category]: Category;
 };
 
 type TargetResponseMap = {
   [TargetEntity.User]: UserResponseDto;
+  [TargetEntity.Category]: CategoryResponseDto;
 };
 
-type TargetResponseDto = UserResponseDto | null;
+type TargetResponseDto = UserResponseDto | CategoryResponseDto | null;
 
 export type AuditLogResponseDto = {
   id: string;
