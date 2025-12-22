@@ -3,11 +3,9 @@ import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { CollectionNames, Symbols } from 'di/common';
 import { BaseSchema } from 'data/mongo/schemas/base-schema';
 import { EntityModel } from 'data';
-import { TransactionModel } from 'domain/transaction/transaction';
 import { TransactionSchema } from 'data/mongo/schemas/transaction-schema';
 import { TransactionRepositoryImpl } from 'data/mongo/repositories/transaction-repository';
-import { TransactionRepository, TransactionService, TransactionServiceImpl } from 'domain/transaction';
-import { UtilsModule } from 'di/common/modules/infrastructure/utils/utils-module';
+import { TransactionRepository, TransactionService, TransactionServiceImpl, TransactionModel } from 'domain/transaction';
 
 @Module({
     imports: [

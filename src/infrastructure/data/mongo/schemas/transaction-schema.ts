@@ -3,8 +3,7 @@ import { BaseSchema } from 'data/mongo/schemas/base-schema';
 import { CollectionNames } from 'di/common';
 import { identifierToObjectId, objectIdToIdentifier } from 'data';
 import { Identifier } from 'domain/_core';
-import { TransactionModel } from 'domain/transaction';
-import { TransactionType } from 'domain/transaction/types';
+import { TransactionModel, TransactionType } from 'domain/transaction';
 
 export const TransactionSchema: BaseSchema<TransactionModel> = new BaseSchema(
     {
