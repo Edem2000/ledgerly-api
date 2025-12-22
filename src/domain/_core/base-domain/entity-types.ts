@@ -1,6 +1,7 @@
 const EntityType = [
     'user',
     'category',
+    'transaction',
     'role',
     'auditLog',
 ] as const;
