@@ -9,20 +9,20 @@ import { Context } from 'domain/_core';
 
 @Injectable({ scope: Scope.REQUEST })
 export class CurrentUserProvider {
-  constructor(
-    @Inject(Symbols.usecases.users.getMe) private readonly getMeUsecase: GetMeUsecase,
-    @Inject(REQUEST) private readonly request: Request,
-  ) {}
+    constructor(
+        @Inject(Symbols.usecases.users.getMe) private readonly getMeUsecase: GetMeUsecase,
+        @Inject(REQUEST) private readonly request: Request,
+    ) {}
 
-  async get(): Promise<CurrentUser> {
-    const payload = this.request.user as TokenPayload;
-    if (!payload) throw new InvalidCredentialsError();
+    async get(): Promise<CurrentUser> {
+        const payload = this.request.user as TokenPayload;
+        if (!payload) throw new InvalidCredentialsError();
 
-    return await this.getMeUsecase.execute(payload);
-  }
+        return await this.getMeUsecase.execute(payload);
+    }
 
-  getContext(): Context {
-    // @ts-ignore
-    return this.request.context as Context;
-  }
+    getContext(): Context {
+        // @ts-ignore
+        return this.request.context as Context;
+    }
 }

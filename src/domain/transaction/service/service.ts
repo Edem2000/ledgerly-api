@@ -10,35 +10,21 @@ import {
 import { ForbiddenException } from '@nestjs/common';
 
 export interface TransactionService {
-    validateOwnership(
-        transaction: Transaction,
-        userId: Identifier,
-    ): Promise<void>;
+    validateOwnership(transaction: Transaction, userId: Identifier): Promise<void>;
     create(params: CreateParams): Promise<Transaction>;
     getById(id: Identifier): Promise<Transaction | null>;
     deleteById(id: Identifier): Promise<void>;
-    update(
-        transaction: Transaction,
-        params: UpdateParams,
-    ): Promise<Transaction>;
+    update(transaction: Transaction, params: UpdateParams): Promise<Transaction>;
     findAllByUser(userId: Identifier): Promise<Transaction[]>;
-    findPaginatedByUser(
-        params: TransactionListFilter,
-    ): Promise<TransactionListResult>;
+    findPaginatedByUser(params: TransactionListFilter): Promise<TransactionListResult>;
 }
 
-export class TransactionServiceImpl
-    extends BaseService
-    implements TransactionService
-{
+export class TransactionServiceImpl extends BaseService implements TransactionService {
     constructor(private repository: TransactionRepository) {
         super('transaction');
     }
 
-    public async validateOwnership(
-        transaction: Transaction,
-        userId: Identifier,
-    ): Promise<void> {
+    public async validateOwnership(transaction: Transaction, userId: Identifier): Promise<void> {
         if (transaction.userId.toString() !== userId.toString()) {
             throw new ForbiddenException('You do not own this transaction');
         }
@@ -67,10 +53,7 @@ export class TransactionServiceImpl
         await this.repository.save(transaction);
     }
 
-    public async update(
-        transaction: Transaction,
-        params: UpdateParams,
-    ): Promise<Transaction> {
+    public async update(transaction: Transaction, params: UpdateParams): Promise<Transaction> {
         // transaction.title = (params.title as MultiLanguage) || transaction.title;
         // transaction.alias = params.alias || transaction.alias;
         // transaction.icon = params.icon || transaction.icon;
@@ -83,9 +66,7 @@ export class TransactionServiceImpl
         return await this.repository.findAllByUser(userId);
     }
 
-    public async findPaginatedByUser(
-        params: TransactionListFilter,
-    ): Promise<TransactionListResult> {
+    public async findPaginatedByUser(params: TransactionListFilter): Promise<TransactionListResult> {
         return await this.repository.findPaginatedByUser(params);
     }
 

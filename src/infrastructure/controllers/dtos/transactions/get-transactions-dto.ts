@@ -1,11 +1,4 @@
-import {
-    IsEnum,
-    IsInt,
-    IsISO8601,
-    IsOptional,
-    IsString,
-    Min,
-} from 'class-validator';
+import { IsEnum, IsInt, IsISO8601, IsOptional, IsString, Min } from 'class-validator';
 import { TransactionType } from 'domain/transaction/types';
 import { PaginatedDto } from 'infrastructure/controllers/dtos/common/paginated-dto';
 import { Type } from 'class-transformer';

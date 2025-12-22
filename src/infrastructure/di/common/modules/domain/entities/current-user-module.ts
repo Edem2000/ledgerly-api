@@ -15,29 +15,22 @@ import { CurrentUserCacheRepositoryImpl } from 'data/cache/repositories/current-
 import { config } from 'infrastructure/config/config';
 
 @Module({
-  imports: [
-    UtilsModule,
-  ],
-  providers: [
-    {
-      provide: Symbols.domain.currentUser.currentUserRepository,
-      useFactory(model: EntityModel<UserModel>): CurrentUserCacheRepository {
-        return new CurrentUserCacheRepositoryImpl(config.jwt.userCacheTtl);
-      },
-    },
-    {
-      provide: Symbols.domain.currentUser.currentUserService,
-      useFactory(
-        repository: CurrentUserCacheRepository,
-      ): CurrentUserService {
-        return new CurrentUserServiceImpl(repository);
-      },
-      inject: [
-        Symbols.domain.currentUser.currentUserRepository,
-      ],
-    },
-  ],
-  exports: [Symbols.domain.currentUser.currentUserRepository, Symbols.domain.currentUser.currentUserService],
+    imports: [UtilsModule],
+    providers: [
+        {
+            provide: Symbols.domain.currentUser.currentUserRepository,
+            useFactory(model: EntityModel<UserModel>): CurrentUserCacheRepository {
+                return new CurrentUserCacheRepositoryImpl(config.jwt.userCacheTtl);
+            },
+        },
+        {
+            provide: Symbols.domain.currentUser.currentUserService,
+            useFactory(repository: CurrentUserCacheRepository): CurrentUserService {
+                return new CurrentUserServiceImpl(repository);
+            },
+            inject: [Symbols.domain.currentUser.currentUserRepository],
+        },
+    ],
+    exports: [Symbols.domain.currentUser.currentUserRepository, Symbols.domain.currentUser.currentUserService],
 })
-
 export class CurrentUserModule {}

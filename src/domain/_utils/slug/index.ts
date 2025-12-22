@@ -1,3 +1,3 @@
 export interface SlugService {
-  createSlug(raw: string, delimiter?: string): string;
+    createSlug(raw: string, delimiter?: string): string;
 }

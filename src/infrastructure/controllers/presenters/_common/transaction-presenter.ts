@@ -4,10 +4,7 @@ import { CurrentUser } from 'domain/_utils/auth/types';
 import { TransactionType } from 'domain/transaction/types';
 
 export class TransactionPresenter {
-    public static present(
-        transaction: Transaction,
-        currentUser?: CurrentUser,
-    ): TransactionResponseDto {
+    public static present(transaction: Transaction, currentUser?: CurrentUser): TransactionResponseDto {
         return {
             id: transaction.id.toString(),
             title: transaction.title,

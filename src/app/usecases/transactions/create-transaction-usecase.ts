@@ -22,12 +22,7 @@ type CreateResult = {
 };
 
 export interface CreateTransactionUsecase
-    extends Usecase<
-        CreateTransactionParams,
-        CreateResult,
-        CurrentUser,
-        Context
-    > {}
+    extends Usecase<CreateTransactionParams, CreateResult, CurrentUser, Context> {}
 
 export class CreateTransactionUsecaseImpl implements CreateTransactionUsecase {
     constructor(
@@ -36,11 +31,7 @@ export class CreateTransactionUsecaseImpl implements CreateTransactionUsecase {
         private auditLogService: AuditLogService,
     ) {}
 
-    async execute(
-        params: CreateTransactionParams,
-        currentUser: CurrentUser,
-        context: Context,
-    ): Promise<CreateResult> {
+    async execute(params: CreateTransactionParams, currentUser: CurrentUser, context: Context): Promise<CreateResult> {
         const userId = new EntityId(currentUser.id);
         const occurredAt = params.occurredAt || new Date();
 
@@ -51,10 +42,7 @@ export class CreateTransactionUsecaseImpl implements CreateTransactionUsecase {
             occurredAt,
         });
 
-        await this.categoryService.incrementUsage(
-            params.categoryId,
-            occurredAt,
-        );
+        await this.categoryService.incrementUsage(params.categoryId, occurredAt);
 
         await this.auditLogService
             .log(

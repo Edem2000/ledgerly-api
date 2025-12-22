@@ -27,11 +27,6 @@ import { TransactionUsecasesModule } from 'di/common/modules/domain/usecases/tra
         //   useClass: JwtAuthGuard,
         // },
     ],
-    controllers: [
-        UserController,
-        CategoryController,
-        TransactionController,
-        AuditLogController,
-    ],
+    controllers: [UserController, CategoryController, TransactionController, AuditLogController],
 })
 export class AppModule {}

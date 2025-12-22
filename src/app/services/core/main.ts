@@ -6,20 +6,20 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(CoreContainer);
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true, // optional: transforms payloads to DTO class instances
-    }),
-  );
-  app.enableCors();
-  app.useStaticAssets(join(process.cwd(), 'storage'),{
-    prefix: '/storage/',
-  });
-  console.log("port: ", config.port);
-  await app.listen(config.port, '0.0.0.0');
+    const app = await NestFactory.create<NestExpressApplication>(CoreContainer);
+    app.useGlobalPipes(
+        new ValidationPipe({
+            whitelist: true,
+            forbidNonWhitelisted: true,
+            transform: true, // optional: transforms payloads to DTO class instances
+        }),
+    );
+    app.enableCors();
+    app.useStaticAssets(join(process.cwd(), 'storage'), {
+        prefix: '/storage/',
+    });
+    console.log('port: ', config.port);
+    await app.listen(config.port, '0.0.0.0');
 }
 
 bootstrap();

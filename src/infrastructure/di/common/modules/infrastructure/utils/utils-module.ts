@@ -9,27 +9,30 @@ import { TranslateService } from 'domain/_utils/translate';
 import { YandexTranslateService } from 'infrastructure/services/translate';
 
 @Module({
-  providers: [
-    {
-      provide: Symbols.infrastructure.utils.hasher,
-      useFactory(): Hasher {
-        return new HasherImpl();
-      },
-    },
-    {
-      provide: Symbols.infrastructure.utils.slug,
-      useFactory(): SlugService {
-        return new SlugServiceImpl();
-      },
-    },
-    {
-      provide: Symbols.infrastructure.utils.translate,
-      useFactory(): TranslateService {
-        return new YandexTranslateService(config.yandexTranslate);
-      },
-    },
-  ],
-  exports: [Symbols.infrastructure.utils.hasher, Symbols.infrastructure.utils.slug, Symbols.infrastructure.utils.translate ],
+    providers: [
+        {
+            provide: Symbols.infrastructure.utils.hasher,
+            useFactory(): Hasher {
+                return new HasherImpl();
+            },
+        },
+        {
+            provide: Symbols.infrastructure.utils.slug,
+            useFactory(): SlugService {
+                return new SlugServiceImpl();
+            },
+        },
+        {
+            provide: Symbols.infrastructure.utils.translate,
+            useFactory(): TranslateService {
+                return new YandexTranslateService(config.yandexTranslate);
+            },
+        },
+    ],
+    exports: [
+        Symbols.infrastructure.utils.hasher,
+        Symbols.infrastructure.utils.slug,
+        Symbols.infrastructure.utils.translate,
+    ],
 })
-
 export class UtilsModule {}

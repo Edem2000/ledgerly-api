@@ -1,14 +1,7 @@
 import { EntityModel, MongooseRepository } from 'data';
 import { Identifier } from 'domain/_core';
-import {
-    Transaction,
-    TransactionModel,
-    TransactionRepository,
-} from 'domain/transaction';
-import {
-    TransactionListFilter,
-    TransactionListResult,
-} from 'domain/transaction/service/types';
+import { Transaction, TransactionModel, TransactionRepository } from 'domain/transaction';
+import { TransactionListFilter, TransactionListResult } from 'domain/transaction/service/types';
 
 export class TransactionRepositoryImpl
     extends MongooseRepository<TransactionModel, Transaction>
@@ -19,15 +12,10 @@ export class TransactionRepositoryImpl
     }
 
     public async findAllByUser(userId: Identifier): Promise<Transaction[]> {
-        return await this.find(
-            { userId, deleted: false },
-            { sort: { createdAt: -1 } },
-        );
+        return await this.find({ userId, deleted: false }, { sort: { createdAt: -1 } });
     }
 
-    public async findPaginatedByUser(
-        params: TransactionListFilter,
-    ): Promise<TransactionListResult> {
+    public async findPaginatedByUser(params: TransactionListFilter): Promise<TransactionListResult> {
         const { userId, from, to, categoryId, type, page, limit } = params;
 
         const query: Record<string, any> = { userId, deleted: false };
@@ -54,14 +42,8 @@ export class TransactionRepositoryImpl
         };
     }
 
-    public async findAllByCategory(
-        userId: Identifier,
-        categoryId: Identifier,
-    ): Promise<Transaction[]> {
-        return await this.find(
-            { userId, categoryId, deleted: false },
-            { sort: { createdAt: -1 } },
-        );
+    public async findAllByCategory(userId: Identifier, categoryId: Identifier): Promise<Transaction[]> {
+        return await this.find({ userId, categoryId, deleted: false }, { sort: { createdAt: -1 } });
     }
 
     public async findById(id: Identifier): Promise<Transaction | null> {

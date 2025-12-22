@@ -1,10 +1,5 @@
 import { Usecase } from 'domain/_core/base-domain/base-usecase';
-import {
-    Transaction,
-    TransactionService,
-    TransactionSortField,
-    TransactionType,
-} from 'domain/transaction';
+import { Transaction, TransactionService, TransactionSortField, TransactionType } from 'domain/transaction';
 import { CurrentUser } from 'domain/_utils/auth/types';
 import { Context, EntityId, Identifier } from 'domain/_core';
 
@@ -26,12 +21,7 @@ type GetTransactionsResult = {
 };
 
 export interface GetTransactionsUsecase
-    extends Usecase<
-        GetTransactionsParams,
-        GetTransactionsResult,
-        CurrentUser,
-        Context
-    > {}
+    extends Usecase<GetTransactionsParams, GetTransactionsResult, CurrentUser, Context> {}
 
 export class GetTransactionsUsecaseImpl implements GetTransactionsUsecase {
     constructor(private transactionService: TransactionService) {}
@@ -43,11 +33,10 @@ export class GetTransactionsUsecaseImpl implements GetTransactionsUsecase {
     ): Promise<GetTransactionsResult> {
         const { page, limit } = params;
 
-        const { transactions, total } =
-            await this.transactionService.findPaginatedByUser({
-                ...params,
-                userId: new EntityId(currentUser.id),
-            });
+        const { transactions, total } = await this.transactionService.findPaginatedByUser({
+            ...params,
+            userId: new EntityId(currentUser.id),
+        });
 
         return { transactions, page, limit, total };
     }

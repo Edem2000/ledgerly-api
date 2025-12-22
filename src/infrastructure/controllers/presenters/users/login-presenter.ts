@@ -5,20 +5,22 @@ import { UserPresenter, UserResponseDto } from 'infrastructure/controllers/prese
 import { ErrorDto } from 'infrastructure/controllers/dtos/error-dto';
 
 export class LoginPresenter {
-  static present(user: User, role: Role, tokens: TokensObject): LoginResponseDto{
-    return {
-      success: true,
-      user: UserPresenter.present(user, role),
-      tokens: tokens,
+    static present(user: User, role: Role, tokens: TokensObject): LoginResponseDto {
+        return {
+            success: true,
+            user: UserPresenter.present(user, role),
+            tokens: tokens,
+        };
     }
-  }
 }
 
-export type LoginResponseDto = {
-  success: boolean,
-  user: UserResponseDto,
-  tokens: {
-    accessToken: string,
-    refreshToken: string,
-  }
-} | ErrorDto;
+export type LoginResponseDto =
+    | {
+          success: boolean;
+          user: UserResponseDto;
+          tokens: {
+              accessToken: string;
+              refreshToken: string;
+          };
+      }
+    | ErrorDto;

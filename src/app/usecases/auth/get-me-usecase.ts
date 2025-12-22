@@ -15,43 +15,43 @@ type GetMeResult = CurrentUser;
 export interface GetMeUsecase extends Usecase<GetMeParams, GetMeResult> {}
 
 export class GetMeUsecaseImpl implements GetMeUsecase {
-  constructor(
-    private userService: UserService,
-    private currentUserService: CurrentUserService,
-    private roleService: RoleService,
-  ) {}
+    constructor(
+        private userService: UserService,
+        private currentUserService: CurrentUserService,
+        private roleService: RoleService,
+    ) {}
 
-  async execute(params: GetMeParams): Promise<GetMeResult> {
-    const cached = this.currentUserService.get(params.id);
+    async execute(params: GetMeParams): Promise<GetMeResult> {
+        const cached = this.currentUserService.get(params.id);
 
-    if(cached){
-      return cached;
+        if (cached) {
+            return cached;
+        }
+
+        const user = await this.userService.getById(new EntityId(params.id));
+
+        if (!user) {
+            throw new UserNotFoundError();
+        }
+
+        const role = await this.roleService.findById(user.role);
+
+        if (!role) {
+            throw new RoleNotFoundError();
+        }
+
+        const userData = {
+            id: user.id.toString(),
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            language: user.language,
+            roleId: role.id.toString(),
+            roleAlias: role.alias,
+        };
+
+        this.currentUserService.set(userData);
+
+        return userData;
     }
-
-    const user = await this.userService.getById(new EntityId(params.id));
-
-    if(!user){
-      throw new UserNotFoundError();
-    }
-
-    const role = await this.roleService.findById(user.role);
-
-    if(!role) {
-      throw new RoleNotFoundError();
-    }
-
-    const userData = {
-      id: user.id.toString(),
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      language: user.language,
-      roleId: role.id.toString(),
-      roleAlias: role.alias,
-    };
-
-    this.currentUserService.set(userData)
-
-    return userData;
-  }
 }

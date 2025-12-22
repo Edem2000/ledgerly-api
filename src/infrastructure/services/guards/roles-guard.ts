@@ -6,31 +6,31 @@ import { EXCLUDED_ROLES_KEY } from 'infrastructure/services/decorators/exclude-r
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
+    constructor(private readonly reflector: Reflector) {}
 
-  canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.getAllAndOverride<RoleAlias[]>(ROLES_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    canActivate(context: ExecutionContext): boolean {
+        const requiredRoles = this.reflector.getAllAndOverride<RoleAlias[]>(ROLES_KEY, [
+            context.getHandler(),
+            context.getClass(),
+        ]);
 
-    const excludedRoles = this.reflector.getAllAndOverride<RoleAlias[]>(
-      EXCLUDED_ROLES_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+        const excludedRoles = this.reflector.getAllAndOverride<RoleAlias[]>(EXCLUDED_ROLES_KEY, [
+            context.getHandler(),
+            context.getClass(),
+        ]);
 
-    const { user } = context.switchToHttp().getRequest();
+        const { user } = context.switchToHttp().getRequest();
 
-    // Check if user role is excluded
-    if (excludedRoles?.length && excludedRoles.includes(user.roleAlias)) {
-      throw new ForbiddenException('Access denied for your role');
+        // Check if user role is excluded
+        if (excludedRoles?.length && excludedRoles.includes(user.roleAlias)) {
+            throw new ForbiddenException('Access denied for your role');
+        }
+
+        // Check if user role is allowed
+        if (requiredRoles?.length && !requiredRoles.includes(user.roleAlias)) {
+            throw new ForbiddenException('Access denied for your role');
+        }
+
+        return true;
     }
-
-    // Check if user role is allowed
-    if (requiredRoles?.length && !requiredRoles.includes(user.roleAlias)) {
-      throw new ForbiddenException('Access denied for your role');
-    }
-
-    return true;
-  }
 }

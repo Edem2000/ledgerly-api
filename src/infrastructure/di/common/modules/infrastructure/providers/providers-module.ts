@@ -4,16 +4,13 @@ import { UserUsecasesModule } from 'di/common/modules/domain/usecases/user-useca
 import { CurrentUserProvider } from 'infrastructure/utils/current-user-provider';
 
 @Module({
-  imports: [
-    UserUsecasesModule
-  ],
-  providers: [
-    {
-      provide: Symbols.infrastructure.providers.currentUser,
-      useClass: CurrentUserProvider,
-    },
-  ],
-  exports: [Symbols.infrastructure.providers.currentUser],
+    imports: [UserUsecasesModule],
+    providers: [
+        {
+            provide: Symbols.infrastructure.providers.currentUser,
+            useClass: CurrentUserProvider,
+        },
+    ],
+    exports: [Symbols.infrastructure.providers.currentUser],
 })
-
 export class ProvidersModule {}

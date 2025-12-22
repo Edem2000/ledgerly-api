@@ -4,6 +4,6 @@ import { AppModule } from 'services/core/app.module';
 import { UtilsModule } from 'di/common/modules/infrastructure/utils/utils-module';
 
 @Module({
-  imports: [UtilsModule, MongooseModule, AppModule],
+    imports: [UtilsModule, MongooseModule, AppModule],
 })
 export class CoreContainer {}

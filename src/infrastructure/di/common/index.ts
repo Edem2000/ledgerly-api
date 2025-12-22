@@ -1,2 +1,2 @@
-export * from "./symbols"
-export * from "./modules"
+export * from './symbols';
+export * from './modules';

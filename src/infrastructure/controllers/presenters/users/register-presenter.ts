@@ -4,15 +4,17 @@ import { UserPresenter, UserResponseDto } from 'infrastructure/controllers/prese
 import { ErrorDto } from 'infrastructure/controllers/dtos/error-dto';
 
 export class RegisterPresenter {
-  static present(user: User, role: Role): RegisterResponseDto{
-    return {
-      success: true,
-      user: UserPresenter.present(user, role),
+    static present(user: User, role: Role): RegisterResponseDto {
+        return {
+            success: true,
+            user: UserPresenter.present(user, role),
+        };
     }
-  }
 }
 
-export type RegisterResponseDto = {
-  success: boolean,
-  user: UserResponseDto,
-} | ErrorDto;
+export type RegisterResponseDto =
+    | {
+          success: boolean;
+          user: UserResponseDto;
+      }
+    | ErrorDto;

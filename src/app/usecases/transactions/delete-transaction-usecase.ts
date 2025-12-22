@@ -10,12 +10,7 @@ type DeleteTransactionParams = {
 
 type DeleteTransactionResult = void;
 export interface DeleteTransactionUsecase
-    extends Usecase<
-        DeleteTransactionParams,
-        DeleteTransactionResult,
-        CurrentUser,
-        Context
-    > {}
+    extends Usecase<DeleteTransactionParams, DeleteTransactionResult, CurrentUser, Context> {}
 
 export class DeleteTransactionUsecaseImpl implements DeleteTransactionUsecase {
     constructor(

@@ -1,12 +1,4 @@
-import {
-    IsEnum,
-    IsISO8601,
-    IsMongoId,
-    IsNumber,
-    IsOptional,
-    IsPositive,
-    IsString,
-} from 'class-validator';
+import { IsEnum, IsISO8601, IsMongoId, IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
 import { TransactionType } from 'domain/transaction/types';
 
 export class CreateTransactionDto {

@@ -15,18 +15,12 @@ export interface CategoryService {
     incrementUsage(categoryId: Identifier, lastUsage: Date): Promise<void>;
 }
 
-export class CategoryServiceImpl
-    extends BaseService
-    implements CategoryService
-{
+export class CategoryServiceImpl extends BaseService implements CategoryService {
     constructor(private repository: CategoryRepository) {
         super('category');
     }
 
-    public async validateOwnership(
-        category: Category,
-        userId: Identifier,
-    ): Promise<void> {
+    public async validateOwnership(category: Category, userId: Identifier): Promise<void> {
         if (category.userId.toString() !== userId.toString()) {
             throw new ForbiddenException('You do not own this category');
         }
@@ -57,10 +51,7 @@ export class CategoryServiceImpl
         await this.repository.save(category);
     }
 
-    public async update(
-        category: Category,
-        params: UpdateParams,
-    ): Promise<Category> {
+    public async update(category: Category, params: UpdateParams): Promise<Category> {
         category.title = (params.title as MultiLanguage) || category.title;
         category.alias = params.alias || category.alias;
         category.icon = params.icon || category.icon;
@@ -77,10 +68,7 @@ export class CategoryServiceImpl
         return await this.repository.save(entity);
     }
 
-    public async incrementUsage(
-        categoryId: Identifier,
-        lastUsageDate: Date,
-    ): Promise<void> {
+    public async incrementUsage(categoryId: Identifier, lastUsageDate: Date): Promise<void> {
         const category = await this.repository.findById(categoryId);
 
         if (!category) {

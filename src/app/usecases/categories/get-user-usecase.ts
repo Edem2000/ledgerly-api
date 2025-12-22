@@ -7,35 +7,35 @@ import { RoleNotFoundError, UserNotFoundError } from 'domain/utils/errors';
 import { Identifier } from 'domain/_core';
 
 type GetUserParams = {
-  id: Identifier,
-}
+    id: Identifier;
+};
 
 type GetUserResult = {
-  user: User,
-  role: Role,
-}
+    user: User;
+    role: Role;
+};
 
 export interface GetUserUsecase extends Usecase<GetUserParams, GetUserResult> {}
 
 export class GetUserUsecaseImpl implements GetUserUsecase {
-  constructor(
-    private userService: UserService,
-    private roleService: RoleService,
-  ) {}
+    constructor(
+        private userService: UserService,
+        private roleService: RoleService,
+    ) {}
 
-  async execute(params: GetUserParams): Promise<GetUserResult> {
-    const user = await this.userService.getById(params.id);
+    async execute(params: GetUserParams): Promise<GetUserResult> {
+        const user = await this.userService.getById(params.id);
 
-    if(!user) {
-      throw new UserNotFoundError();
+        if (!user) {
+            throw new UserNotFoundError();
+        }
+
+        const role = await this.roleService.findById(user.role);
+
+        if (!role) {
+            throw new RoleNotFoundError();
+        }
+
+        return { user, role };
     }
-
-    const role = await this.roleService.findById(user.role);
-
-    if(!role) {
-      throw new RoleNotFoundError();
-    }
-
-    return {user, role}
-  }
 }

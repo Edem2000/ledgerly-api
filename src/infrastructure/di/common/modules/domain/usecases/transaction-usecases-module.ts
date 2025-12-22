@@ -11,10 +11,7 @@ import {
     CreateTransactionUsecaseImpl,
 } from 'usecases/transactions/create-transaction-usecase';
 import { TransactionService } from 'domain/transaction';
-import {
-    GetTransactionsUsecase,
-    GetTransactionsUsecaseImpl,
-} from 'usecases/transactions/get-transactions-usecase';
+import { GetTransactionsUsecase, GetTransactionsUsecaseImpl } from 'usecases/transactions/get-transactions-usecase';
 import {
     DeleteTransactionUsecase,
     DeleteTransactionUsecaseImpl,
@@ -31,11 +28,7 @@ import { TransactionModule } from 'di/common/modules/domain/entities/transaction
                 categoryService: CategoryService,
                 auditLogService: AuditLogService,
             ): CreateTransactionUsecase {
-                return new CreateTransactionUsecaseImpl(
-                    transactionService,
-                    categoryService,
-                    auditLogService,
-                );
+                return new CreateTransactionUsecaseImpl(transactionService, categoryService, auditLogService);
             },
             inject: [
                 Symbols.domain.transaction.service,
@@ -45,9 +38,7 @@ import { TransactionModule } from 'di/common/modules/domain/entities/transaction
         },
         {
             provide: Symbols.usecases.transactions.get,
-            useFactory(
-                transactionService: TransactionService,
-            ): GetTransactionsUsecase {
+            useFactory(transactionService: TransactionService): GetTransactionsUsecase {
                 return new GetTransactionsUsecaseImpl(transactionService);
             },
             inject: [Symbols.domain.transaction.service],
@@ -58,15 +49,9 @@ import { TransactionModule } from 'di/common/modules/domain/entities/transaction
                 transactionService: TransactionService,
                 auditLogService: AuditLogService,
             ): DeleteTransactionUsecase {
-                return new DeleteTransactionUsecaseImpl(
-                    transactionService,
-                    auditLogService,
-                );
+                return new DeleteTransactionUsecaseImpl(transactionService, auditLogService);
             },
-            inject: [
-                Symbols.domain.transaction.service,
-                Symbols.domain.auditLog.auditLogService,
-            ],
+            inject: [Symbols.domain.transaction.service, Symbols.domain.auditLog.auditLogService],
         },
     ],
     exports: [

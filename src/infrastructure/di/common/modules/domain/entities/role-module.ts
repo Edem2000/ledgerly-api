@@ -5,27 +5,22 @@ import { RoleRepositoryImpl, RolesCollection } from 'data/mongo/repositories/rol
 import { RoleService, RoleServiceImpl } from 'domain/role/service/service';
 
 @Module({
-  imports: [],
-  providers: [
-    {
-      provide: Symbols.domain.role.roleRepository,
-      useFactory(): RoleRepository {
-        return new RoleRepositoryImpl(new RolesCollection());
-      },
-    },
-    {
-      provide: Symbols.domain.role.roleService,
-      useFactory(
-        repository: RoleRepository,
-      ): RoleService {
-        return new RoleServiceImpl(repository);
-      },
-      inject: [
-        Symbols.domain.role.roleRepository,
-      ],
-    },
-  ],
-  exports: [Symbols.domain.role.roleRepository, Symbols.domain.role.roleService],
+    imports: [],
+    providers: [
+        {
+            provide: Symbols.domain.role.roleRepository,
+            useFactory(): RoleRepository {
+                return new RoleRepositoryImpl(new RolesCollection());
+            },
+        },
+        {
+            provide: Symbols.domain.role.roleService,
+            useFactory(repository: RoleRepository): RoleService {
+                return new RoleServiceImpl(repository);
+            },
+            inject: [Symbols.domain.role.roleRepository],
+        },
+    ],
+    exports: [Symbols.domain.role.roleRepository, Symbols.domain.role.roleService],
 })
-
 export class RoleModule {}

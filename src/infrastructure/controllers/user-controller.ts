@@ -1,17 +1,17 @@
 import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Inject,
-  Param,
-  Patch,
-  Post,
-  Query,
-  UseGuards,
-  UsePipes,
+    Body,
+    Controller,
+    Delete,
+    Get,
+    HttpCode,
+    HttpStatus,
+    Inject,
+    Param,
+    Patch,
+    Post,
+    Query,
+    UseGuards,
+    UsePipes,
 } from '@nestjs/common';
 import { CreateUserUsecase } from 'usecases/users/create-user-usecase';
 import { Symbols } from 'di/common';
@@ -25,8 +25,8 @@ import { PaginationPipe } from 'infrastructure/controllers/pipes/pagination-pipe
 import { GetUsersDto } from 'infrastructure/controllers/dtos/users/get-users-dto';
 import { GetUsersUsecase } from 'usecases/users/get-users-usecase';
 import {
-  GetUsersPresenter,
-  GetUsersResponseDto,
+    GetUsersPresenter,
+    GetUsersResponseDto,
 } from 'infrastructure/controllers/presenters/users/get-users-presenter';
 import { GetUserDto } from 'infrastructure/controllers/dtos/users/get-user-dto';
 import { EntityId } from 'domain/_core';
@@ -34,15 +34,15 @@ import { GetUserPresenter, GetUserResponseDto } from 'infrastructure/controllers
 import { GetUserUsecase } from 'usecases/users/get-user-usecase';
 import { DeleteUserDto } from 'infrastructure/controllers/dtos/users/delete-user-dto';
 import {
-  DeleteUserPresenter,
-  DeleteUserResponseDto,
+    DeleteUserPresenter,
+    DeleteUserResponseDto,
 } from 'infrastructure/controllers/presenters/users/delete-user-presenter';
 import { DeleteUserUsecase } from 'usecases/users/delete-user-usecase';
 import { UpdateUserDto } from 'infrastructure/controllers/dtos/users/update-user-dto';
 import { UpdateUserUsecase } from 'usecases/users/update-user-usecase';
 import {
-  UpdateUserPresenter,
-  UpdateUserResponseDto,
+    UpdateUserPresenter,
+    UpdateUserResponseDto,
 } from 'infrastructure/controllers/presenters/users/update-user-presenter';
 import { JwtAuthGuard } from 'infrastructure/services/guards/auth-guard';
 import { RolesGuard } from 'infrastructure/services/guards/roles-guard';
@@ -57,191 +57,199 @@ import { CurrentUserProvider } from 'infrastructure/utils/current-user-provider'
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('users')
 export class UserController {
-  constructor(
-    @Inject(Symbols.usecases.users.createUser)
-    private readonly createUserUsecase: CreateUserUsecase,
-    @Inject(Symbols.usecases.users.login)
-    private readonly loginUsecase: LoginUsecase,
-    @Inject(Symbols.usecases.users.changePassword)
-    private readonly changePasswordUsecase: ChangePasswordUsecase,
-    @Inject(Symbols.usecases.users.get)
-    private readonly getUsersUsecase: GetUsersUsecase,
-    @Inject(Symbols.usecases.users.getOne)
-    private readonly getUserUsecase: GetUserUsecase,
-    @Inject(Symbols.usecases.users.search)
-    private readonly searchUsersUsecase: SearchUsersUsecase,
-    @Inject(Symbols.usecases.users.deleteUser)
-    private readonly deleteUserUsecase: DeleteUserUsecase,
-    @Inject(Symbols.usecases.users.updateUser)
-    private readonly updateUserUsecase: UpdateUserUsecase,
+    constructor(
+        @Inject(Symbols.usecases.users.createUser)
+        private readonly createUserUsecase: CreateUserUsecase,
+        @Inject(Symbols.usecases.users.login)
+        private readonly loginUsecase: LoginUsecase,
+        @Inject(Symbols.usecases.users.changePassword)
+        private readonly changePasswordUsecase: ChangePasswordUsecase,
+        @Inject(Symbols.usecases.users.get)
+        private readonly getUsersUsecase: GetUsersUsecase,
+        @Inject(Symbols.usecases.users.getOne)
+        private readonly getUserUsecase: GetUserUsecase,
+        @Inject(Symbols.usecases.users.search)
+        private readonly searchUsersUsecase: SearchUsersUsecase,
+        @Inject(Symbols.usecases.users.deleteUser)
+        private readonly deleteUserUsecase: DeleteUserUsecase,
+        @Inject(Symbols.usecases.users.updateUser)
+        private readonly updateUserUsecase: UpdateUserUsecase,
 
-    @Inject(Symbols.infrastructure.providers.currentUser)
-    private readonly currentUser: CurrentUserProvider,
-  ) {}
+        @Inject(Symbols.infrastructure.providers.currentUser)
+        private readonly currentUser: CurrentUserProvider,
+    ) {}
 
-  @Post('/register')
-  @Public()
-  public async register(@Body() params: RegisterUserDto): Promise<RegisterResponseDto> {
-    try {
-      const context = this.currentUser.getContext();
+    @Post('/register')
+    @Public()
+    public async register(@Body() params: RegisterUserDto): Promise<RegisterResponseDto> {
+        try {
+            const context = this.currentUser.getContext();
 
-      const createParams = {
-        name: {
-          first: params.firstName,
-          last: params.lastName,
-        },
-        email: params.email,
-        language: params.language,
-        password: params.password,
-        phone: params.phone,
-        role: params.role,
-      };
+            const createParams = {
+                name: {
+                    first: params.firstName,
+                    last: params.lastName,
+                },
+                email: params.email,
+                language: params.language,
+                password: params.password,
+                phone: params.phone,
+                role: params.role,
+            };
 
-      const { user, role } =  await this.createUserUsecase.execute(createParams, undefined, context);
+            const { user, role } = await this.createUserUsecase.execute(createParams, undefined, context);
 
-      return RegisterPresenter.present(user, role);
-    } catch (error) {
-      throw getExceptionByError(error);
+            return RegisterPresenter.present(user, role);
+        } catch (error) {
+            throw getExceptionByError(error);
+        }
     }
-  }
 
-  @Public()
-  @HttpCode(HttpStatus.OK)
-  @Post('/login')
-  public async login(@Body() params: LoginDto): Promise<LoginResponseDto> {
-    try {
-      const context = this.currentUser.getContext();
+    @Public()
+    @HttpCode(HttpStatus.OK)
+    @Post('/login')
+    public async login(@Body() params: LoginDto): Promise<LoginResponseDto> {
+        try {
+            const context = this.currentUser.getContext();
 
-      const { user, role, tokens } = await this.loginUsecase.execute({
-        email: params.email,
-        password: params.password,
-      }, null, context);
+            const { user, role, tokens } = await this.loginUsecase.execute(
+                {
+                    email: params.email,
+                    password: params.password,
+                },
+                null,
+                context,
+            );
 
-      return LoginPresenter.present(user, role, tokens);
-    } catch (error) {
-      throw getExceptionByError(error);
+            return LoginPresenter.present(user, role, tokens);
+        } catch (error) {
+            throw getExceptionByError(error);
+        }
     }
-  }
 
-  @HttpCode(HttpStatus.OK)
-  @Patch(':id/change-password')
-  public async changePassword(@Param('id') id: string, @Body() params: ChangePasswordDto): Promise<LoginResponseDto> {
-    try {
-      const context = this.currentUser.getContext();
-      const currentUser = await this.currentUser.get();
+    @HttpCode(HttpStatus.OK)
+    @Patch(':id/change-password')
+    public async changePassword(@Param('id') id: string, @Body() params: ChangePasswordDto): Promise<LoginResponseDto> {
+        try {
+            const context = this.currentUser.getContext();
+            const currentUser = await this.currentUser.get();
 
-      const { user, role, tokens } = await this.changePasswordUsecase.execute({
-        userId: new EntityId(id),
-        currentPassword: params.currentPassword,
-        newPassword: params.newPassword,
-        newPasswordConfirmation: params.newPasswordConfirmation,
-      }, currentUser, context);
+            const { user, role, tokens } = await this.changePasswordUsecase.execute(
+                {
+                    userId: new EntityId(id),
+                    currentPassword: params.currentPassword,
+                    newPassword: params.newPassword,
+                    newPasswordConfirmation: params.newPasswordConfirmation,
+                },
+                currentUser,
+                context,
+            );
 
-      return ChangePasswordPresenter.present(user, role, tokens);
-    } catch (error) {
-      throw getExceptionByError(error);
+            return ChangePasswordPresenter.present(user, role, tokens);
+        } catch (error) {
+            throw getExceptionByError(error);
+        }
     }
-  }
 
-  @HttpCode(HttpStatus.OK)
-  @Get('/search')
-  @Public()
-  @UsePipes(PaginationPipe)
-  public async search(@Query() query: SearchUsersDto): Promise<GetUsersResponseDto> {
-    try {
-      const params = {
-        page: query.page,
-        limit: query.limit,
-        query: query.query,
-      };
+    @HttpCode(HttpStatus.OK)
+    @Get('/search')
+    @Public()
+    @UsePipes(PaginationPipe)
+    public async search(@Query() query: SearchUsersDto): Promise<GetUsersResponseDto> {
+        try {
+            const params = {
+                page: query.page,
+                limit: query.limit,
+                query: query.query,
+            };
 
-      const { users, page, limit, total } = await this.searchUsersUsecase.execute(params);
+            const { users, page, limit, total } = await this.searchUsersUsecase.execute(params);
 
-      return GetUsersPresenter.present(users, page, limit, total);
-    } catch (error) {
-      throw getExceptionByError(error);
+            return GetUsersPresenter.present(users, page, limit, total);
+        } catch (error) {
+            throw getExceptionByError(error);
+        }
     }
-  }
 
-  @HttpCode(HttpStatus.OK)
-  @Get()
-  @Public()
-  @UsePipes(PaginationPipe)
-  public async getUsers(@Query() query: GetUsersDto): Promise<GetUsersResponseDto> {
-    try {
-      const params = {
-        page: query.page,
-        limit: query.limit,
-        sortBy: query.sortBy,
-        sortOrder: query.sortOrder,
-        status: query.status,
-      };
+    @HttpCode(HttpStatus.OK)
+    @Get()
+    @Public()
+    @UsePipes(PaginationPipe)
+    public async getUsers(@Query() query: GetUsersDto): Promise<GetUsersResponseDto> {
+        try {
+            const params = {
+                page: query.page,
+                limit: query.limit,
+                sortBy: query.sortBy,
+                sortOrder: query.sortOrder,
+                status: query.status,
+            };
 
-      const { users, page, limit, total } = await this.getUsersUsecase.execute(params);
+            const { users, page, limit, total } = await this.getUsersUsecase.execute(params);
 
-      return GetUsersPresenter.present(users, page, limit, total);
-    } catch (error) {
-      throw getExceptionByError(error);
+            return GetUsersPresenter.present(users, page, limit, total);
+        } catch (error) {
+            throw getExceptionByError(error);
+        }
     }
-  }
 
-  @HttpCode(HttpStatus.OK)
-  @Get(':id')
-  @Public()
-  public async getUser(@Param() params: GetUserDto): Promise<GetUserResponseDto> {
-    try {
-      const id = new EntityId(params.id)
+    @HttpCode(HttpStatus.OK)
+    @Get(':id')
+    @Public()
+    public async getUser(@Param() params: GetUserDto): Promise<GetUserResponseDto> {
+        try {
+            const id = new EntityId(params.id);
 
-      const { user, role } = await this.getUserUsecase.execute({ id });
+            const { user, role } = await this.getUserUsecase.execute({ id });
 
-      return GetUserPresenter.present(user, role);
-    } catch (error) {
-      throw getExceptionByError(error);
+            return GetUserPresenter.present(user, role);
+        } catch (error) {
+            throw getExceptionByError(error);
+        }
     }
-  }
 
-  @HttpCode(HttpStatus.OK)
-  @Delete(':id')
-  @Public()
-  public async deleteUser(@Param() params: DeleteUserDto): Promise<DeleteUserResponseDto> {
-    try {
-      const currentUser = await this.currentUser.get();
-      const context = this.currentUser.getContext();
-      const id = new EntityId(params.id)
+    @HttpCode(HttpStatus.OK)
+    @Delete(':id')
+    @Public()
+    public async deleteUser(@Param() params: DeleteUserDto): Promise<DeleteUserResponseDto> {
+        try {
+            const currentUser = await this.currentUser.get();
+            const context = this.currentUser.getContext();
+            const id = new EntityId(params.id);
 
-      await this.deleteUserUsecase.execute({ id }, currentUser, context);
+            await this.deleteUserUsecase.execute({ id }, currentUser, context);
 
-      return DeleteUserPresenter.present();
-    } catch (error) {
-      throw getExceptionByError(error);
+            return DeleteUserPresenter.present();
+        } catch (error) {
+            throw getExceptionByError(error);
+        }
     }
-  }
 
-  @HttpCode(HttpStatus.OK)
-  @Patch(':id')
-  @Public()
-  public async updateUser(@Param('id') id: string, @Body() params: UpdateUserDto): Promise<UpdateUserResponseDto> {
-    try {
-      const context = this.currentUser.getContext();
-      const currentUser = await this.currentUser.get();
-      const updateParams = {
-        id: new EntityId(id),
-        query: {
-          name: {
-            first: params.firstName,
-            last: params.lastName,
-          },
-          email: params.email,
-          language: params.language,
-          phone: params.phone,
-        },
-      };
+    @HttpCode(HttpStatus.OK)
+    @Patch(':id')
+    @Public()
+    public async updateUser(@Param('id') id: string, @Body() params: UpdateUserDto): Promise<UpdateUserResponseDto> {
+        try {
+            const context = this.currentUser.getContext();
+            const currentUser = await this.currentUser.get();
+            const updateParams = {
+                id: new EntityId(id),
+                query: {
+                    name: {
+                        first: params.firstName,
+                        last: params.lastName,
+                    },
+                    email: params.email,
+                    language: params.language,
+                    phone: params.phone,
+                },
+            };
 
-      const { user, role} = await this.updateUserUsecase.execute(updateParams, currentUser, context);
+            const { user, role } = await this.updateUserUsecase.execute(updateParams, currentUser, context);
 
-      return UpdateUserPresenter.present(user, role);
-    } catch (error) {
-      throw getExceptionByError(error);
+            return UpdateUserPresenter.present(user, role);
+        } catch (error) {
+            throw getExceptionByError(error);
+        }
     }
-  }
 }

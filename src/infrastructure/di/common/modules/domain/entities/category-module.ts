@@ -11,36 +11,32 @@ import { CategoryService, CategoryServiceImpl } from 'domain/category/service/se
 import { UtilsModule } from 'di/common/modules/infrastructure/utils/utils-module';
 
 @Module({
-  imports: [
-    MongooseModule.forFeatureAsync([
-      {
-        name: CollectionNames.categories,
-        useFactory: (): BaseSchema<CategoryModel> => CategorySchema.set('collection', CollectionNames.categories),
-      },
-    ]),
-    UtilsModule,
-  ],
-  providers: [
-    {
-      provide: Symbols.domain.category.categoryRepository,
-      useFactory(model: EntityModel<CategoryModel>): CategoryRepository {
-        return new CategoryRepositoryImpl(model);
-      },
-      inject: [getModelToken(CollectionNames.categories)],
-    },
-    {
-      provide: Symbols.domain.category.categoryService,
-      useFactory(
-        repository: CategoryRepository,
-      ): CategoryService {
-        return new CategoryServiceImpl(repository);
-      },
-      inject: [
-        Symbols.domain.category.categoryRepository,
-      ],
-    },
-  ],
-  exports: [Symbols.domain.category.categoryRepository, Symbols.domain.category.categoryService],
+    imports: [
+        MongooseModule.forFeatureAsync([
+            {
+                name: CollectionNames.categories,
+                useFactory: (): BaseSchema<CategoryModel> =>
+                    CategorySchema.set('collection', CollectionNames.categories),
+            },
+        ]),
+        UtilsModule,
+    ],
+    providers: [
+        {
+            provide: Symbols.domain.category.categoryRepository,
+            useFactory(model: EntityModel<CategoryModel>): CategoryRepository {
+                return new CategoryRepositoryImpl(model);
+            },
+            inject: [getModelToken(CollectionNames.categories)],
+        },
+        {
+            provide: Symbols.domain.category.categoryService,
+            useFactory(repository: CategoryRepository): CategoryService {
+                return new CategoryServiceImpl(repository);
+            },
+            inject: [Symbols.domain.category.categoryRepository],
+        },
+    ],
+    exports: [Symbols.domain.category.categoryRepository, Symbols.domain.category.categoryService],
 })
-
 export class CategoryModule {}

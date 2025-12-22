@@ -1,2 +1,2 @@
-export * from "./repository/repository"
-export * from "./service/service"
+export * from './repository/repository';
+export * from './service/service';

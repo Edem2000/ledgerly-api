@@ -5,36 +5,34 @@ import { JwtService, TokenPayload, TokensObject } from 'domain/_utils/auth/types
 
 @Injectable()
 export class JwtServiceImpl implements JwtService {
-  private readonly jwtConfig: JwtConfig;
+    private readonly jwtConfig: JwtConfig;
 
-  constructor(
-    private readonly jwtService: NestJwtService,
-  ) {
-    this.jwtConfig = config.jwt;
-  }
-
-  public getTokens(payload: TokenPayload): TokensObject {
-    return {
-      accessToken: this.generateAccessToken(payload),
-      refreshToken: this.generateRefreshToken(payload),
+    constructor(private readonly jwtService: NestJwtService) {
+        this.jwtConfig = config.jwt;
     }
-  }
 
-  public generateAccessToken(payload: TokenPayload): string {
-    return this.jwtService.sign(payload, {
-      secret: this.jwtConfig.secret,
-      expiresIn: this.jwtConfig.accessTtl,
-    });
-  }
+    public getTokens(payload: TokenPayload): TokensObject {
+        return {
+            accessToken: this.generateAccessToken(payload),
+            refreshToken: this.generateRefreshToken(payload),
+        };
+    }
 
-  public generateRefreshToken(payload: TokenPayload): string {
-    return this.jwtService.sign(payload, {
-      secret: this.jwtConfig.secret,
-      expiresIn: this.jwtConfig.refreshTtl,
-    });
-  }
+    public generateAccessToken(payload: TokenPayload): string {
+        return this.jwtService.sign(payload, {
+            secret: this.jwtConfig.secret,
+            expiresIn: this.jwtConfig.accessTtl,
+        });
+    }
 
-  public verifyToken(token: string) {
-    return this.jwtService.verify(token, { secret: this.jwtConfig.secret });
-  }
+    public generateRefreshToken(payload: TokenPayload): string {
+        return this.jwtService.sign(payload, {
+            secret: this.jwtConfig.secret,
+            expiresIn: this.jwtConfig.refreshTtl,
+        });
+    }
+
+    public verifyToken(token: string) {
+        return this.jwtService.verify(token, { secret: this.jwtConfig.secret });
+    }
 }

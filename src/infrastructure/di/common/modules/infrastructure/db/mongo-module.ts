@@ -7,29 +7,28 @@ import { Symbols } from 'infrastructure/di/common/symbols';
 import { config } from 'infrastructure/config/config';
 
 @Module({
-  imports: [
-    Mongoose.forRootAsync({
-      useFactory: () => {
+    imports: [
+        Mongoose.forRootAsync({
+            useFactory: () => {
+                plugin(sessionPlugin);
 
-        plugin(sessionPlugin);
-
-        return {
-          uri: config.mongo.connectionString,
-          // authSource,
-          // users: username,
-          // pass: password,
-          // dbName,
-        };
-      },
-      inject: [],
-    }),
-  ],
-  providers: [
-    {
-      provide: Symbols.infrastructure.db.idGenerator,
-      useClass: MongoId,
-    },
-  ],
-  exports: [Symbols.infrastructure.db.idGenerator],
+                return {
+                    uri: config.mongo.connectionString,
+                    // authSource,
+                    // users: username,
+                    // pass: password,
+                    // dbName,
+                };
+            },
+            inject: [],
+        }),
+    ],
+    providers: [
+        {
+            provide: Symbols.infrastructure.db.idGenerator,
+            useClass: MongoId,
+        },
+    ],
+    exports: [Symbols.infrastructure.db.idGenerator],
 })
 export class MongooseModule {}
