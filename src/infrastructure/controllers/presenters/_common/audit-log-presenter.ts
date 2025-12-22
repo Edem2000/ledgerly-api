@@ -8,6 +8,11 @@ import {
   CategoryPresenter,
   CategoryResponseDto,
 } from 'infrastructure/controllers/presenters/_common/category-presenter';
+import { Transaction } from 'domain/transaction';
+import {
+    TransactionPresenter,
+    TransactionResponseDto,
+} from 'infrastructure/controllers/presenters/_common/transaction-presenter';
 
 export class AuditLogPresenter {
   public static present(enrichedAuditLog: EnrichedAuditLog): AuditLogResponseDto {
@@ -48,6 +53,7 @@ export class AuditLogPresenter {
     const presenterStrategy = {
       [TargetEntity.User]: (user: User) => UserPresenter.present(user),
       [TargetEntity.Category]: (category: Category) => CategoryPresenter.present(category),
+      [TargetEntity.Transaction]: (transaction: Transaction) => TransactionPresenter.present(transaction),
     } satisfies {
       [K in TargetEntity]: (x: TargetMap[K]) => TargetResponseMap[K];
     };
@@ -61,14 +67,16 @@ export class AuditLogPresenter {
 type TargetMap = {
   [TargetEntity.User]: User;
   [TargetEntity.Category]: Category;
+  [TargetEntity.Transaction]: Transaction;
 };
 
 type TargetResponseMap = {
   [TargetEntity.User]: UserResponseDto;
   [TargetEntity.Category]: CategoryResponseDto;
+  [TargetEntity.Transaction]: TransactionResponseDto;
 };
 
-type TargetResponseDto = UserResponseDto | CategoryResponseDto | null;
+type TargetResponseDto = UserResponseDto | CategoryResponseDto | TransactionResponseDto | null;
 
 export type AuditLogResponseDto = {
   id: string;

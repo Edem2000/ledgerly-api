@@ -8,26 +8,30 @@ import { AuditLogController } from 'infrastructure/controllers/audit-log-control
 import { AuditLogUsecasesModule } from 'di/common/modules/domain/usecases/audit-logs-usecases-module';
 import { CategoryUsecasesModule } from 'di/common/modules/domain/usecases/category-usecases-module';
 import { CategoryController } from 'infrastructure/controllers/category-controller';
+import { TransactionController } from 'infrastructure/controllers/transaction-controller';
+import { TransactionUsecasesModule } from 'di/common/modules/domain/usecases/transaction-usecases-module';
 
 @Module({
-  imports: [
-    UserUsecasesModule,
-    CategoryUsecasesModule,
-    AuditLogUsecasesModule,
-    AuthModule,
-    ProvidersModule,
-  ],
-  providers: [
-    JwtAuthGuard
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: JwtAuthGuard,
-    // },
-  ],
-  controllers: [
-    UserController,
-    CategoryController,
-    AuditLogController,
-  ],
+    imports: [
+        UserUsecasesModule,
+        CategoryUsecasesModule,
+        TransactionUsecasesModule,
+        AuditLogUsecasesModule,
+        AuthModule,
+        ProvidersModule,
+    ],
+    providers: [
+        JwtAuthGuard,
+        // {
+        //   provide: APP_GUARD,
+        //   useClass: JwtAuthGuard,
+        // },
+    ],
+    controllers: [
+        UserController,
+        CategoryController,
+        TransactionController,
+        AuditLogController,
+    ],
 })
 export class AppModule {}
