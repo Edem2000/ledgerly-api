@@ -1,6 +1,4 @@
-import { Category } from 'domain/category/category';
-import { HexString, Language } from 'domain/_core';
-import { CurrentUser } from 'domain/_utils/auth/types';
+import { HexString } from 'domain/_core';
 import { CategoryBudget } from 'domain/category-budget';
 
 export class CategoryBudgetPresenter {

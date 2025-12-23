@@ -69,6 +69,48 @@ export class CategoryAlreadyExistsError extends CustomError {
     }
 }
 
+export class CategoryNotFoundError extends CustomError {
+    constructor() {
+        super(
+            {
+                ru: 'Категория не найдена',
+                uz: 'Категория не найдена',
+                en: 'Category not found',
+            },
+            10010,
+            HttpStatus.NOT_FOUND,
+        );
+    }
+}
+
+export class CategoryBudgetAlreadyExistsError extends CustomError {
+    constructor() {
+        super(
+            {
+                ru: 'Бюджет категории уже существует',
+                uz: 'Бюджет категории уже существует',
+                en: 'Category budget already exists',
+            },
+            10011,
+            HttpStatus.CONFLICT,
+        );
+    }
+}
+
+export class CategoryBudgetAmountRequiredError extends CustomError {
+    constructor() {
+        super(
+            {
+                ru: 'Укажите план или лимит',
+                uz: 'План ёки лимитни кўрсатинг',
+                en: 'Provide planned or limit amount',
+            },
+            10012,
+            HttpStatus.BAD_REQUEST,
+        );
+    }
+}
+
 export class ProductExistsError extends CustomError {
     constructor() {
         super(

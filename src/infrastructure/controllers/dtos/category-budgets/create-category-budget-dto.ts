@@ -1,9 +1,9 @@
-import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Max, Min } from 'class-validator';
-import { CategoryBudgetStatus } from 'domain/category-budget';
+import { IsEnum, IsInt, IsMongoId, IsOptional, IsString, Max, Min } from 'class-validator';
 import { Currency } from 'domain/transaction';
 
 export class CreateCategoryBudgetDto {
     @IsString()
+    @IsMongoId()
     categoryId: string;
 
     @IsInt()
@@ -27,15 +27,10 @@ export class CreateCategoryBudgetDto {
     limitAmount?: number;
 
     @IsOptional()
-    @IsString()
-    @IsEnum(CategoryBudgetStatus)
+    @IsEnum(Currency)
     currency?: Currency;
 
     @IsOptional()
     @IsString()
     note?: string;
-
-    @IsOptional()
-    @IsEnum(CategoryBudgetStatus)
-    status?: CategoryBudgetStatus;
 }

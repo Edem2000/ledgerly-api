@@ -6,10 +6,10 @@ import {
 } from 'infrastructure/controllers/presenters/_common/category-budget-presenter';
 
 export class CreateCategoryBudgetPresenter {
-    static present(transaction: CategoryBudget): CreateCategoryBudgetResponseDto {
+    static present(budget: CategoryBudget): CreateCategoryBudgetResponseDto {
         return {
             success: true,
-            transaction: CategoryBudgetPresenter.present(transaction),
+            budget: CategoryBudgetPresenter.present(budget),
         };
     }
 }
@@ -17,6 +17,6 @@ export class CreateCategoryBudgetPresenter {
 export type CreateCategoryBudgetResponseDto =
     | {
           success: boolean;
-          transaction: CategoryBudgetResponseDto;
+          budget: CategoryBudgetResponseDto;
       }
     | ErrorDto;

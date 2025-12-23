@@ -2,7 +2,6 @@ import { Usecase } from 'domain/_core/base-domain/base-usecase';
 import { Context, EntityId, Identifier } from 'domain/_core';
 import { CurrentUser } from 'domain/_utils/auth/types';
 import { CategoryBudget, CategoryBudgetService, CategoryBudgetStatus } from 'domain/category-budget';
-import { AuditLogService } from 'domain/audit';
 import { Currency } from 'domain/transaction/types';
 // import { CategoryBudgetAlreadyExistsError } from 'domain/utils/errors';
 
@@ -24,10 +23,7 @@ export interface CreateCategoryBudgetUsecase
     extends Usecase<CreateCategoryBudgetParams, CreateResult, CurrentUser, Context> {}
 
 export class CreateCategoryBudgetUsecaseImpl implements CreateCategoryBudgetUsecase {
-    constructor(
-        private categoryBudgetService: CategoryBudgetService,
-        private auditLogService: AuditLogService,
-    ) {}
+    constructor(private categoryBudgetService: CategoryBudgetService) {}
 
     async execute(
         params: CreateCategoryBudgetParams,
