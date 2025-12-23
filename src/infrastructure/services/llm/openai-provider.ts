@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { LlmCategorySuggestion, LlmProvider } from 'domain/_utils/llm';
 import OpenAI from 'openai';
+import { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 
 const DEFAULT_PROMPT_PATH = path.resolve(process.cwd(), 'src/infrastructure/services/llm/system-prompt.txt');
 
@@ -33,19 +34,21 @@ export class OpenAiProvider implements LlmProvider {
         existingCategories: string[];
         maxSuggestions: number;
     }): Promise<LlmCategorySuggestion[]> {
+        const messages: ChatCompletionMessageParam[] = [
+            { role: 'system', content: this.systemPrompt },
+            {
+                role: 'user',
+                content: JSON.stringify({
+                    title: params.title,
+                    existingCategories: params.existingCategories,
+                    maxSuggestions: params.maxSuggestions,
+                }),
+            },
+        ];
+
         const payload = {
             model: this.config.model,
-            messages: [
-                { role: 'system', content: this.systemPrompt },
-                {
-                    role: 'user',
-                    content: JSON.stringify({
-                        title: params.title,
-                        existingCategories: params.existingCategories,
-                        maxSuggestions: params.maxSuggestions,
-                    }),
-                },
-            ],
+            messages,
             temperature: 0.2,
         };
 
