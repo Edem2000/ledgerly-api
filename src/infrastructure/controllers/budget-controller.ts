@@ -1,8 +1,12 @@
 import {
     Body,
     Controller,
+    Get,
+    HttpCode,
+    HttpStatus,
     Inject,
     Post,
+    Query,
     UseGuards,
 } from '@nestjs/common';
 import { Symbols } from 'di/common';
@@ -16,6 +20,9 @@ import { AllowRoles } from 'infrastructure/services/decorators/roles';
 import { CreateCategoryBudgetPresenter, CreateCategoryBudgetResponseDto } from 'infrastructure/controllers/presenters/category-budgets/create-presenter';
 import { CreateCategoryBudgetUsecase } from 'usecases/category-budgets/create-usecase';
 import { CreateCategoryBudgetDto } from 'infrastructure/controllers/dtos/category-budgets/create-category-budget-dto';
+import { GetCategoryBudgetsPresenter, GetCategoryBudgetsResponseDto } from 'infrastructure/controllers/presenters/category-budgets/get-presenter';
+import { GetCategoryBudgetsQueryDto } from 'infrastructure/controllers/dtos/category-budgets/get-dto';
+import { GetCategoryBudgetsUsecase } from 'usecases/category-budgets/get-usecase';
 
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -24,8 +31,8 @@ export class CategoryBudgetController {
     constructor(
         @Inject(Symbols.usecases.categoryBudgets.create)
         private readonly createCategoryBudgetUsecase: CreateCategoryBudgetUsecase,
-        // @Inject(Symbols.usecases.categoryBudgets.get)
-        // private readonly getCategoryBudgetsUsecase: GetCategoryBudgetsUsecase,
+        @Inject(Symbols.usecases.categoryBudgets.get)
+        private readonly getCategoryBudgetsUsecase: GetCategoryBudgetsUsecase,
         // @Inject(Symbols.usecases.categoryBudgets.delete)
         // private readonly deleteCategoryBudgetUsecase: DeleteCategoryBudgetUsecase,
 
@@ -60,36 +67,28 @@ export class CategoryBudgetController {
         }
     }
 
-    // @HttpCode(HttpStatus.OK)
-    // @Get()
-    // @AllowRoles(RoleAlias.User)
-    // @UsePipes(PaginationPipe)
-    // public async get(@Query() query: GetCategoryBudgetsQueryDto): Promise<GetCategoryBudgetsResponseDto> {
-    //     try {
-    //         const currentUser = await this.currentUser.get();
-    //         const context = this.currentUser.getContext();
-    //         const { from, to, categoryId, type } = query;
-    //
-    //         const params = {
-    //             page: query.page,
-    //             limit: query.limit,
-    //             from: from ? new Date(from) : undefined,
-    //             to: to ? new Date(to) : undefined,
-    //             categoryId: categoryId ? new EntityId(categoryId) : undefined,
-    //             type: type,
-    //         };
-    //
-    //         const { transactions, page, limit, total } = await this.getCategoryBudgetsUsecase.execute(
-    //             params,
-    //             currentUser,
-    //             context,
-    //         );
-    //
-    //         return GetCategoryBudgetsPresenter.present(transactions, page, limit, total);
-    //     } catch (error) {
-    //         throw getExceptionByError(error);
-    //     }
-    // }
+    @HttpCode(HttpStatus.OK)
+    @Get()
+    @AllowRoles(RoleAlias.User)
+    public async get(@Query() query: GetCategoryBudgetsQueryDto): Promise<GetCategoryBudgetsResponseDto> {
+        try {
+            const currentUser = await this.currentUser.get();
+            const context = this.currentUser.getContext();
+
+            const { budgets } = await this.getCategoryBudgetsUsecase.execute(
+                {
+                    year: query.year,
+                    month: query.month,
+                },
+                currentUser,
+                context,
+            );
+
+            return GetCategoryBudgetsPresenter.present(budgets);
+        } catch (error) {
+            throw getExceptionByError(error);
+        }
+    }
     //
     // @HttpCode(HttpStatus.OK)
     // @Delete(':id')

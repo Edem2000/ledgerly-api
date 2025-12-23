@@ -20,6 +20,7 @@ export interface CategoryBudgetService {
         note?: string;
         status: CategoryBudgetStatus;
     }): Promise<CategoryBudget>;
+    findByPeriod(userId: Identifier, period: BudgetPeriod): Promise<CategoryBudget[]>;
     getById(id: Identifier): Promise<CategoryBudget | null>;
     deleteById(id: Identifier): Promise<void>;
 }
