@@ -24,3 +24,8 @@ export type TransactionListResult = {
     transactions: Transaction[];
     total: number;
 };
+
+export type ExpenseCategorySummary = {
+    categoryId: Identifier;
+    total: number;
+};

@@ -40,6 +40,18 @@ import {
     DeleteTransactionPresenter,
     DeleteTransactionResponseDto,
 } from 'infrastructure/controllers/presenters/transactions/delete-presenter';
+import { SuggestCategoryUsecase } from 'usecases/transactions/suggest-category-usecase';
+import { SuggestCategoryDto } from 'infrastructure/controllers/dtos/transactions/suggest-category-dto';
+import {
+    SuggestCategoryPresenter,
+    SuggestCategoryResponseDto,
+} from 'infrastructure/controllers/presenters/transactions/suggest-category-presenter';
+import {
+    ExpenseChartPresenter,
+    ExpenseChartResponseDto,
+} from 'infrastructure/controllers/presenters/transactions/expense-chart-presenter';
+import { GetExpenseChartQueryDto } from 'infrastructure/controllers/dtos/transactions/get-expense-chart-dto';
+import { GetExpenseChartUsecase } from 'usecases/transactions/get-expense-chart-usecase';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('transactions')
@@ -51,6 +63,10 @@ export class TransactionController {
         private readonly getTransactionsUsecase: GetTransactionsUsecase,
         @Inject(Symbols.usecases.transactions.delete)
         private readonly deleteTransactionUsecase: DeleteTransactionUsecase,
+        @Inject(Symbols.usecases.transactions.suggestCategory)
+        private readonly suggestCategoryUsecase: SuggestCategoryUsecase,
+        @Inject(Symbols.usecases.transactions.expenseChart)
+        private readonly expenseChartUsecase: GetExpenseChartUsecase,
 
         @Inject(Symbols.infrastructure.providers.currentUser)
         private readonly currentUser: CurrentUserProvider,
@@ -78,6 +94,29 @@ export class TransactionController {
             );
 
             return CreateTransactionPresenter.present(transaction);
+        } catch (error) {
+            throw getExceptionByError(error);
+        }
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @Get('/expense-chart')
+    @AllowRoles(RoleAlias.User)
+    public async getExpenseChart(@Query() query: GetExpenseChartQueryDto): Promise<ExpenseChartResponseDto> {
+        try {
+            const currentUser = await this.currentUser.get();
+            const context = this.currentUser.getContext();
+
+            const { items } = await this.expenseChartUsecase.execute(
+                {
+                    year: query.year,
+                    month: query.month,
+                },
+                currentUser,
+                context,
+            );
+
+            return ExpenseChartPresenter.present(items);
         } catch (error) {
             throw getExceptionByError(error);
         }
@@ -126,6 +165,28 @@ export class TransactionController {
             await this.deleteTransactionUsecase.execute({ id }, currentUser, context);
 
             return DeleteTransactionPresenter.present();
+        } catch (error) {
+            throw getExceptionByError(error);
+        }
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @Post('/suggest-category')
+    @AllowRoles(RoleAlias.User)
+    public async suggestCategory(@Body() params: SuggestCategoryDto): Promise<SuggestCategoryResponseDto> {
+        try {
+            const currentUser = await this.currentUser.get();
+            const context = this.currentUser.getContext();
+
+            const { suggestions } = await this.suggestCategoryUsecase.execute(
+                {
+                    title: params.title,
+                },
+                currentUser,
+                context,
+            );
+
+            return SuggestCategoryPresenter.present(suggestions);
         } catch (error) {
             throw getExceptionByError(error);
         }
