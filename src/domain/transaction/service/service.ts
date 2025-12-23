@@ -3,6 +3,7 @@ import { TransactionRepository } from 'domain/transaction/repository/repository'
 import { Transaction } from 'domain/transaction/transaction';
 import {
     CreateParams,
+    ExpenseCategorySummary,
     TransactionListFilter,
     TransactionListResult,
     UpdateParams,
@@ -17,6 +18,7 @@ export interface TransactionService {
     update(transaction: Transaction, params: UpdateParams): Promise<Transaction>;
     findAllByUser(userId: Identifier): Promise<Transaction[]>;
     findPaginatedByUser(params: TransactionListFilter): Promise<TransactionListResult>;
+    getExpenseSummaryByCategory(params: { userId: Identifier; from: Date; to: Date }): Promise<ExpenseCategorySummary[]>;
 }
 
 export class TransactionServiceImpl extends BaseService implements TransactionService {
@@ -68,6 +70,14 @@ export class TransactionServiceImpl extends BaseService implements TransactionSe
 
     public async findPaginatedByUser(params: TransactionListFilter): Promise<TransactionListResult> {
         return await this.repository.findPaginatedByUser(params);
+    }
+
+    public async getExpenseSummaryByCategory(params: {
+        userId: Identifier;
+        from: Date;
+        to: Date;
+    }): Promise<ExpenseCategorySummary[]> {
+        return await this.repository.getExpenseSummaryByCategory(params);
     }
 
     public async save(entity: Transaction): Promise<Transaction> {

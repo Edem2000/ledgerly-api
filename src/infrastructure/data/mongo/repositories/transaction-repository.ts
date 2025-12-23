@@ -1,7 +1,8 @@
 import { EntityModel, MongooseRepository } from 'data';
 import { Identifier } from 'domain/_core';
-import { Transaction, TransactionModel, TransactionRepository } from 'domain/transaction';
-import { TransactionListFilter, TransactionListResult } from 'domain/transaction/service/types';
+import { Transaction, TransactionModel, TransactionRepository, TransactionType } from 'domain/transaction';
+import { ExpenseCategorySummary, TransactionListFilter, TransactionListResult } from 'domain/transaction/service/types';
+import { identifierToObjectId, objectIdToIdentifier } from 'infrastructure/data/mongo/utils/identifier';
 
 export class TransactionRepositoryImpl
     extends MongooseRepository<TransactionModel, Transaction>
@@ -44,6 +45,44 @@ export class TransactionRepositoryImpl
 
     public async findAllByCategory(userId: Identifier, categoryId: Identifier): Promise<Transaction[]> {
         return await this.find({ userId, categoryId, deleted: false }, { sort: { createdAt: -1 } });
+    }
+
+    public async getExpenseSummaryByCategory(params: {
+        userId: Identifier;
+        from: Date;
+        to: Date;
+    }): Promise<ExpenseCategorySummary[]> {
+        const { userId, from, to } = params;
+
+        const results = await this.model
+            .aggregate<{ _id: Identifier; total: number }>([
+                {
+                    $match: {
+                        userId: identifierToObjectId(userId),
+                        deleted: false,
+                        type: TransactionType.Expense,
+                        occurredAt: {
+                            $gte: from,
+                            $lt: to,
+                        },
+                    },
+                },
+                {
+                    $group: {
+                        _id: '$categoryId',
+                        total: { $sum: '$amount' },
+                    },
+                },
+                {
+                    $sort: { total: -1 },
+                },
+            ])
+            .exec();
+
+        return results.map((item) => ({
+            categoryId: objectIdToIdentifier(item._id) as Identifier,
+            total: item.total,
+        }));
     }
 
     public async findById(id: Identifier): Promise<Transaction | null> {

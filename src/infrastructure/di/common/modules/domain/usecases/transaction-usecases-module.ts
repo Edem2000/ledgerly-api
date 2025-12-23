@@ -19,6 +19,7 @@ import {
 import { TransactionModule } from 'di/common/modules/domain/entities/transaction-module';
 import { SuggestCategoryUsecase, SuggestCategoryUsecaseImpl } from 'usecases/transactions/suggest-category-usecase';
 import { LlmProvider } from 'domain/_utils/llm';
+import { GetExpenseChartUsecase, GetExpenseChartUsecaseImpl } from 'usecases/transactions/get-expense-chart-usecase';
 
 @Module({
     imports: [UserModule, CategoryModule, TransactionModule, AuditLogModule, UtilsModule],
@@ -62,12 +63,23 @@ import { LlmProvider } from 'domain/_utils/llm';
             },
             inject: [Symbols.domain.category.categoryService, Symbols.infrastructure.utils.llm],
         },
+        {
+            provide: Symbols.usecases.transactions.expenseChart,
+            useFactory(
+                transactionService: TransactionService,
+                categoryService: CategoryService,
+            ): GetExpenseChartUsecase {
+                return new GetExpenseChartUsecaseImpl(transactionService, categoryService);
+            },
+            inject: [Symbols.domain.transaction.service, Symbols.domain.category.categoryService],
+        },
     ],
     exports: [
         Symbols.usecases.transactions.create,
         Symbols.usecases.transactions.get,
         Symbols.usecases.transactions.delete,
         Symbols.usecases.transactions.suggestCategory,
+        Symbols.usecases.transactions.expenseChart,
     ],
 })
 export class TransactionUsecasesModule {}

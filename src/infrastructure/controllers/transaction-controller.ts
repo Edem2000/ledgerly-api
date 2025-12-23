@@ -46,6 +46,12 @@ import {
     SuggestCategoryPresenter,
     SuggestCategoryResponseDto,
 } from 'infrastructure/controllers/presenters/transactions/suggest-category-presenter';
+import {
+    ExpenseChartPresenter,
+    ExpenseChartResponseDto,
+} from 'infrastructure/controllers/presenters/transactions/expense-chart-presenter';
+import { GetExpenseChartQueryDto } from 'infrastructure/controllers/dtos/transactions/get-expense-chart-dto';
+import { GetExpenseChartUsecase } from 'usecases/transactions/get-expense-chart-usecase';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('transactions')
@@ -59,6 +65,8 @@ export class TransactionController {
         private readonly deleteTransactionUsecase: DeleteTransactionUsecase,
         @Inject(Symbols.usecases.transactions.suggestCategory)
         private readonly suggestCategoryUsecase: SuggestCategoryUsecase,
+        @Inject(Symbols.usecases.transactions.expenseChart)
+        private readonly expenseChartUsecase: GetExpenseChartUsecase,
 
         @Inject(Symbols.infrastructure.providers.currentUser)
         private readonly currentUser: CurrentUserProvider,
@@ -86,6 +94,29 @@ export class TransactionController {
             );
 
             return CreateTransactionPresenter.present(transaction);
+        } catch (error) {
+            throw getExceptionByError(error);
+        }
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @Get('/expense-chart')
+    @AllowRoles(RoleAlias.User)
+    public async getExpenseChart(@Query() query: GetExpenseChartQueryDto): Promise<ExpenseChartResponseDto> {
+        try {
+            const currentUser = await this.currentUser.get();
+            const context = this.currentUser.getContext();
+
+            const { items } = await this.expenseChartUsecase.execute(
+                {
+                    year: query.year,
+                    month: query.month,
+                },
+                currentUser,
+                context,
+            );
+
+            return ExpenseChartPresenter.present(items);
         } catch (error) {
             throw getExceptionByError(error);
         }
