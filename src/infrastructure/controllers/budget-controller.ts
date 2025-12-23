@@ -1,0 +1,123 @@
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    HttpCode,
+    HttpStatus,
+    Inject,
+    Param,
+    Post,
+    Query,
+    UseGuards,
+    UsePipes,
+} from '@nestjs/common';
+import { Symbols } from 'di/common';
+import { getExceptionByError } from 'infrastructure/controllers/exceptions/exceptions';
+import { EntityId } from 'domain/_core';
+import { JwtAuthGuard } from 'infrastructure/services/guards/auth-guard';
+import { RolesGuard } from 'infrastructure/services/guards/roles-guard';
+import { CurrentUserProvider } from 'infrastructure/utils/current-user-provider';
+import { RoleAlias } from 'domain/role/role';
+import { AllowRoles } from 'infrastructure/services/decorators/roles';
+import { CreateCategoryBudgetPresenter, CreateCategoryBudgetResponseDto } from 'infrastructure/controllers/presenters/category-budgets/create-presenter';
+import { CreateCategoryBudgetUsecase } from 'usecases/category-budgets/create-usecase';
+import { CreateCategoryBudgetDto } from 'infrastructure/controllers/dtos/category-budgets/create-category-budget-dto';
+import { PaginationPipe } from 'infrastructure/controllers/pipes/pagination-pipe';
+import { GetCategoryBudgetsQueryDto } from 'infrastructure/controllers/dtos/category-budgets/get-dto';
+import { GetCategoryBudgetsPresenter, GetCategoryBudgetsResponseDto } from 'infrastructure/controllers/presenters/category-budgets/get-presenter';
+import { DeleteCategoryBudgetDto } from 'infrastructure/controllers/dtos/category-budgets/delete-dto';
+import {
+    DeleteCategoryBudgetPresenter,
+    DeleteCategoryBudgetResponseDto,
+} from 'infrastructure/controllers/presenters/category-budgets/delete-presenter';
+
+
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Controller('budgets')
+export class CategoryBudgetController {
+    constructor(
+        @Inject(Symbols.usecases.categoryBudgets.create)
+        private readonly createCategoryBudgetUsecase: CreateCategoryBudgetUsecase,
+        // @Inject(Symbols.usecases.categoryBudgets.get)
+        // private readonly getCategoryBudgetsUsecase: GetCategoryBudgetsUsecase,
+        // @Inject(Symbols.usecases.categoryBudgets.delete)
+        // private readonly deleteCategoryBudgetUsecase: DeleteCategoryBudgetUsecase,
+
+        @Inject(Symbols.infrastructure.providers.currentUser)
+        private readonly currentUser: CurrentUserProvider,
+    ) {}
+
+    @Post('/')
+    @AllowRoles(RoleAlias.User)
+    public async create(@Body() params: CreateCategoryBudgetDto): Promise<CreateCategoryBudgetResponseDto> {
+        try {
+            const currentUser = await this.currentUser.get();
+            const context = this.currentUser.getContext();
+
+            const { budget } = await this.createCategoryBudgetUsecase.execute(
+                {
+                    categoryId: new EntityId(params.categoryId),
+                    currency: params.currency,
+                    month: params.month,
+                    year: params.year,
+                    note: params.note
+                },
+                currentUser,
+                context,
+            );
+
+            return CreateCategoryBudgetPresenter.present(budget);
+        } catch (error) {
+            throw getExceptionByError(error);
+        }
+    }
+
+    // @HttpCode(HttpStatus.OK)
+    // @Get()
+    // @AllowRoles(RoleAlias.User)
+    // @UsePipes(PaginationPipe)
+    // public async get(@Query() query: GetCategoryBudgetsQueryDto): Promise<GetCategoryBudgetsResponseDto> {
+    //     try {
+    //         const currentUser = await this.currentUser.get();
+    //         const context = this.currentUser.getContext();
+    //         const { from, to, categoryId, type } = query;
+    //
+    //         const params = {
+    //             page: query.page,
+    //             limit: query.limit,
+    //             from: from ? new Date(from) : undefined,
+    //             to: to ? new Date(to) : undefined,
+    //             categoryId: categoryId ? new EntityId(categoryId) : undefined,
+    //             type: type,
+    //         };
+    //
+    //         const { transactions, page, limit, total } = await this.getCategoryBudgetsUsecase.execute(
+    //             params,
+    //             currentUser,
+    //             context,
+    //         );
+    //
+    //         return GetCategoryBudgetsPresenter.present(transactions, page, limit, total);
+    //     } catch (error) {
+    //         throw getExceptionByError(error);
+    //     }
+    // }
+    //
+    // @HttpCode(HttpStatus.OK)
+    // @Delete(':id')
+    // @AllowRoles(RoleAlias.User)
+    // public async delete(@Param() params: DeleteCategoryBudgetDto): Promise<DeleteCategoryBudgetResponseDto> {
+    //     try {
+    //         const currentUser = await this.currentUser.get();
+    //         const context = this.currentUser.getContext();
+    //         const id = new EntityId(params.id);
+    //
+    //         await this.deleteCategoryBudgetUsecase.execute({ id }, currentUser, context);
+    //
+    //         return DeleteCategoryBudgetPresenter.present();
+    //     } catch (error) {
+    //         throw getExceptionByError(error);
+    //     }
+    // }
+}

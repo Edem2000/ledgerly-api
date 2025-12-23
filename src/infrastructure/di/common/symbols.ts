@@ -15,6 +15,7 @@ export const Symbols = generateSymbols({
         currentUser: asUniqueArray(['currentUserRepository', 'currentUserService'] as const),
         role: asUniqueArray(['roleRepository', 'roleService'] as const),
         category: asUniqueArray(['categoryRepository', 'categoryService'] as const),
+        categoryBudget: asUniqueArray(['repository', 'service'] as const),
         transaction: asUniqueArray(['repository', 'service'] as const),
         product: asUniqueArray(['productRepository', 'productService'] as const),
         upload: asUniqueArray(['uploadRepository', 'uploadService'] as const),
@@ -45,6 +46,7 @@ export const Symbols = generateSymbols({
         ] as const),
         categories: asUniqueArray(['create', 'get', 'getOne', 'delete', 'update', 'search'] as const),
         transactions: asUniqueArray(['create', 'get', 'getOne', 'delete', 'update', 'search'] as const),
+        categoryBudgets: asUniqueArray(['create', 'get', 'getOne', 'delete', 'update', 'search'] as const),
         products: asUniqueArray(['create', 'get', 'getOne', 'delete', 'update', 'search'] as const),
         uploads: asUniqueArray(['create', 'get', 'getOne', 'delete'] as const),
         auditLogs: asUniqueArray(['get', 'getOne'] as const),
@@ -56,6 +58,7 @@ export const Symbols = generateSymbols({
 export const CollectionNames = {
     users: 'users',
     categories: 'categories',
+    categoryBudgets: 'category_budgets',
     transactions: 'transactions',
     stateHistory: 'state_history',
     auditLogs: 'audit_logs',

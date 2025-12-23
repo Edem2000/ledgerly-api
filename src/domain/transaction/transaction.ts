@@ -1,11 +1,11 @@
 import { BaseEntity, BaseModel, Identifier } from 'domain/_core';
-import { TransactionType } from 'domain/transaction/types';
+import { Currency, TransactionType } from 'domain/transaction/types';
 
 export interface TransactionModel extends BaseModel {
     title: string;
     note?: string;
     amount: number; // в базовой валюте (UZS), целое число
-    currency: string; // 'UZS' для v1
+    currency: Currency; // 'UZS' для v1
     userId: Identifier;
     categoryId: Identifier;
     type: TransactionType;
@@ -41,11 +41,11 @@ export class Transaction extends BaseEntity<TransactionModel> {
         this.model.amount = value;
     }
 
-    public get currency(): string {
+    public get currency(): Currency {
         return this.model.currency;
     }
 
-    public set currency(value: string) {
+    public set currency(value: Currency) {
         this.model.currency = value;
     }
 
