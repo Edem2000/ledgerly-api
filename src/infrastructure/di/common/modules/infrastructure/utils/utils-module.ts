@@ -7,6 +7,7 @@ import { SlugServiceImpl } from 'infrastructure/services/slug';
 import { config } from 'infrastructure/config/config';
 import { TranslateService } from 'domain/_utils/translate';
 import { YandexTranslateService } from 'infrastructure/services/translate';
+import { OpenaiApiProvider } from 'infrastructure/gateways/llm-provider/openai-api-provider';
 
 @Module({
     providers: [
@@ -28,11 +29,18 @@ import { YandexTranslateService } from 'infrastructure/services/translate';
                 return new YandexTranslateService(config.yandexTranslate);
             },
         },
+        {
+            provide: Symbols.infrastructure.utils.llm,
+            useFactory(): TranslateService {
+                return new OpenaiApiProvider({openaiApiKey: config.llm.openaiApiKey})
+            },
+        },
     ],
     exports: [
         Symbols.infrastructure.utils.hasher,
         Symbols.infrastructure.utils.slug,
         Symbols.infrastructure.utils.translate,
+        Symbols.infrastructure.utils.llm,
     ],
 })
 export class UtilsModule {}

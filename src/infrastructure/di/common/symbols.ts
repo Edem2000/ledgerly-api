@@ -7,7 +7,7 @@ export const Symbols = generateSymbols({
         storage: asUniqueArray(['asyncStorage'] as const),
         kafka: asUniqueArray(['kafkaProducer', 'kafkaClient', 'keyGenerator'] as const),
         jwt: asUniqueArray(['jwtService', 'jwtStrategy'] as const),
-        utils: asUniqueArray(['hasher', 'slug', 'translate'] as const),
+        utils: asUniqueArray(['hasher', 'slug', 'translate', 'llm'] as const),
         providers: asUniqueArray(['currentUser'] as const),
     },
     domain: {

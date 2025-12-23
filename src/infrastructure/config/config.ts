@@ -11,7 +11,19 @@ type GeneralConfig = {
     };
     jwt: JwtConfig;
     yandexTranslate: YandexTranslateConfig;
+    llm: {
+        provider: LlmProviderOption,
+        openaiApiKey: string,
+    }
 };
+
+export const LlmProviderOption = {
+    OpenAI: "openai",
+} as const;
+
+export type LlmProviderOption = (typeof LlmProviderOption)[keyof typeof LlmProviderOption];
+
+const LlmProviderOptions = Object.values(LlmProviderOption);
 
 export type JwtConfig = {
     secret: string;
@@ -42,4 +54,8 @@ export const config: GeneralConfig = {
         apiKey: envVars.YANDEX_API_KEY || '',
         folderId: envVars.YANDEX_FOLDER_ID || '',
     },
+    llm: {
+        provider: envVars.LLM_PROVIDER as LlmProviderOption,
+        openaiApiKey: envVars.OPENAI_API_KEY || "",
+    }
 };
