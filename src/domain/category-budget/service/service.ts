@@ -25,6 +25,7 @@ export interface CategoryBudgetService {
     deleteById(id: Identifier): Promise<void>;
     validateOwnership(category: CategoryBudget, userId: Identifier): Promise<void>;
     save(entity: CategoryBudget): Promise<CategoryBudget>;
+    archiveByCategory(categoryId: Identifier): Promise<void>;
 }
 
 export class CategoryBudgetServiceImpl extends BaseService implements CategoryBudgetService {
@@ -159,6 +160,10 @@ export class CategoryBudgetServiceImpl extends BaseService implements CategoryBu
 
     public async save(entity: CategoryBudget): Promise<CategoryBudget> {
         return await this.repository.save(entity);
+    }
+
+    public async archiveByCategory(categoryId: Identifier): Promise<void> {
+        await this.repository.archiveByCategory(categoryId);
     }
 
     private ensureHasAtLeastOneValue(plannedAmount?: number, limitAmount?: number) {

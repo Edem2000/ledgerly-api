@@ -87,4 +87,8 @@ export class CategoryBudgetRepositoryImpl extends MongooseRepository<CategoryBud
             },
         );
     }
+
+    public async archiveByCategory(categoryId: Identifier): Promise<void> {
+        await this.updateMany({ categoryId, deleted: false }, { $set: { status: CategoryBudgetStatus.archived, deleted: true, deletedAt: new Date() } });
+    }
 }

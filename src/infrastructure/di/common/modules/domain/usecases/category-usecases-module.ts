@@ -5,9 +5,11 @@ import { AuditLogService } from 'domain/audit';
 import { AuditLogModule } from 'di/common/modules/domain/entities/audit-log-module';
 import { UtilsModule } from 'di/common/modules/infrastructure/utils/utils-module';
 import { CategoryModule } from 'di/common/modules/domain/entities/category-module';
+import { CategoryBudgetModule } from 'di/common/modules/domain/entities/category-budget-module';
 import { TranslateService } from 'domain/_utils/translate';
 import { SlugService } from 'domain/_utils/slug';
 import { CategoryService } from 'domain/category';
+import { CategoryBudgetService } from 'domain/category-budget';
 import { CreateCategoryUsecase, CreateCategoryUsecaseImpl } from 'usecases/categories/create-category-usecase';
 import { GetCategoriesUsecase, GetCategoriesUsecaseImpl } from 'usecases/categories/get-categories-usecase';
 import { GetCategoryUsecase, GetCategoryUsecaseImpl } from 'usecases/categories/get-category-usecase';
@@ -15,7 +17,7 @@ import { UpdateCategoryUsecase, UpdateCategoryUsecaseImpl } from 'usecases/categ
 import { DeleteCategoryUsecase, DeleteCategoryUsecaseImpl } from 'usecases/categories/delete-category-usecase';
 
 @Module({
-    imports: [UserModule, CategoryModule, AuditLogModule, UtilsModule],
+    imports: [UserModule, CategoryModule, CategoryBudgetModule, AuditLogModule, UtilsModule],
     providers: [
         {
             provide: Symbols.usecases.categories.create,
@@ -72,10 +74,18 @@ import { DeleteCategoryUsecase, DeleteCategoryUsecaseImpl } from 'usecases/categ
         },
         {
             provide: Symbols.usecases.categories.delete,
-            useFactory(categoryService: CategoryService, auditLogService: AuditLogService): DeleteCategoryUsecase {
-                return new DeleteCategoryUsecaseImpl(categoryService, auditLogService);
+            useFactory(
+                categoryService: CategoryService,
+                auditLogService: AuditLogService,
+                categoryBudgetService: CategoryBudgetService,
+            ): DeleteCategoryUsecase {
+                return new DeleteCategoryUsecaseImpl(categoryService, auditLogService, categoryBudgetService);
             },
-            inject: [Symbols.domain.category.categoryService, Symbols.domain.auditLog.auditLogService],
+            inject: [
+                Symbols.domain.category.categoryService,
+                Symbols.domain.auditLog.auditLogService,
+                Symbols.domain.categoryBudget.service,
+            ],
         },
     ],
     exports: [

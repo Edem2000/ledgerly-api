@@ -20,4 +20,5 @@ export interface CategoryBudgetRepository {
         period: BudgetPeriod;
         includeDeleted?: boolean;
     }): Promise<CategoryBudget[]>;
+    archiveByCategory(categoryId: Identifier): Promise<void>;
 }
