@@ -1,0 +1,569 @@
+classDiagram
+class Identifier {
+  <<interface>>
+  +type: Identifier
+  +toString(): string
+}
+
+class IdGenerator {
+  <<interface>>
+  +generate(): HexString
+}
+
+class BaseModel {
+  <<interface>>
+  +id?: Identifier
+}
+
+class Usecase~T,K,CurrentUser,Context~ {
+  <<interface>>
+  +execute(params: T, currentUser?: CurrentUser, context?: Context): Promise<K>
+}
+
+class JwtService {
+  <<interface>>
+  +getTokens(payload: TokenPayload): TokensObject
+  +generateAccessToken(payload: TokenPayload): string
+  +generateRefreshToken(payload: TokenPayload): string
+  +verifyToken(token: string): string
+}
+
+class Hasher {
+  <<interface>>
+  +hashPassword(password: string): string
+  +comparePasswords(input: string, hashed: string): boolean
+}
+
+class LlmProvider {
+  <<interface>>
+  +suggestCategories(params: LlmCategorySuggestionParams): Promise<LlmCategorySuggestion[]>
+}
+
+class LlmCategorySuggestionParams {
+  <<interface>>
+  +title: string
+  +existingCategories: string[]
+  +maxSuggestions: number
+}
+
+class SlugService {
+  <<interface>>
+  +createSlug(raw: string, delimiter?: string): string
+}
+
+class TranslateService {
+  <<interface>>
+  +translate(input: string, targetLanguage: Language, originLanguage?: Language): Promise<string>
+  +detectLanguage(input: string): Promise<Language>
+}
+
+class CurrentUserCacheRepository {
+  <<interface>>
+  +get(userId: HexString): CurrentUser | undefined
+  +set(ctx: CurrentUser, ttlSeconds?: number): void
+  +delete(userId: HexString): void
+}
+
+class CurrentUserService {
+  <<interface>>
+  +get(userId: HexString): CurrentUser | undefined
+  +set(ctx: CurrentUser, ttlSeconds?: number): void
+  +delete(userId: HexString): void
+  +updateUser(user: User): void
+}
+
+class UserModel {
+  <<interface>>
+  +name: UserNameObject
+  +email: string
+  +phone: string
+  +password: string
+  +role: Identifier
+  +status: UserStatus
+  +language: Language
+  +deleted: boolean
+  +deletedAt?: Date
+  +lastLoggedInAt?: Date
+  +refreshToken?: string
+  +registeredAt: Date
+}
+
+class UserRepository {
+  <<interface>>
+  +create(user: User): Promise<User>
+  +save(entity: User): Promise<User>
+  +findByEmail(email: string): Promise<User | null>
+  +findById(id: Identifier): Promise<User | null>
+  +getUsers(filter: UserFilterQuery, sort: UserSortQuery, limit: number, skip: number): Promise<GetUsersResult>
+  +searchByFields(query: string, limit?: number, skip?: number): Promise<GetUsersResult>
+  +updateById(id: Identifier, update: UpdateQuery<User>): Promise<User | null>
+  +updateOne(filter: FilterQuery<User>, update: UpdateQuery<User>): Promise<User | null>
+  +updateMany(filter: FilterQuery<User>, update: UpdateQuery<User>): Promise<User[]>
+}
+
+class UserService {
+  <<interface>>
+  +create(params: CreateParams): Promise<User>
+  +validateUser(params: LoginParams): Promise<User | null>
+  +updateRefreshToken(user: User, token: string): Promise<User>
+  +changePassword(user: User, password: string): Promise<User>
+  +getUsers(params: GetUsersParams): Promise<GetUsersResult>
+  +search(query: string): Promise<GetUsersResult>
+  +getById(id: Identifier): Promise<User | null>
+  +deleteById(id: Identifier): Promise<void>
+  +update(user: User, params: UpdateParams): Promise<User>
+  +findByEmail(email: string): Promise<User | null>
+}
+
+class RoleModel {
+  <<interface>>
+  +name: MultiLanguage
+  +alias: RoleAlias
+}
+
+class RoleRepository {
+  <<interface>>
+  +findByAlias(alias: RoleAlias): Promise<Role | null>
+  +findById(id: Identifier): Promise<Role | null>
+  +getAll(): Promise<Role[]>
+  +getTopRoles(): Promise<Role[]>
+}
+
+class RoleService {
+  <<interface>>
+  +findByAlias(alias: string): Promise<Role | null>
+  +findById(id: Identifier): Promise<Role | null>
+  +getAll(): Promise<Role[]>
+  +getTopRoles(): Promise<Role[]>
+  +isTopRole(roleAlias: RoleAlias): Promise<boolean>
+}
+
+class CategoryModel {
+  <<interface>>
+  +title: MultiLanguage
+  +alias: string
+  +color: string
+  +icon?: string
+  +userId: Identifier
+  +status: CategoryStatus
+  +deleted: boolean
+  +deletedAt?: Date
+  +usageCount: number
+  +lastUsedAt?: Date
+}
+
+class CategoryRepository {
+  <<interface>>
+  +create(category: Category): Promise<Category>
+  +save(category: Category): Promise<Category>
+  +findAllByUser(userId: Identifier): Promise<Category[]>
+  +findById(id: Identifier): Promise<Category | null>
+  +updateById(id: Identifier, update: UpdateQuery<Category>): Promise<Category | null>
+  +updateOne(filter: FilterQuery<Category>, update: UpdateQuery<Category>): Promise<Category | null>
+}
+
+class CategoryService {
+  <<interface>>
+  +validateOwnership(category: Category, userId: Identifier): Promise<void>
+  +create(params: CreateParams): Promise<Category>
+  +getById(id: Identifier): Promise<Category | null>
+  +deleteById(id: Identifier): Promise<void>
+  +update(category: Category, params: UpdateParams): Promise<Category>
+  +findAllByUser(userId: Identifier): Promise<Category[]>
+  +incrementUsage(categoryId: Identifier, lastUsage: Date): Promise<void>
+}
+
+class CategoryBudgetModel {
+  <<interface>>
+  +userId: Identifier
+  +categoryId: Identifier
+  +period: BudgetPeriod
+  +plannedAmount?: number
+  +limitAmount?: number
+  +currency: Currency
+  +note?: string
+  +status: CategoryBudgetStatus
+  +deleted: boolean
+  +deletedAt?: Date
+}
+
+class CategoryBudgetRepository {
+  <<interface>>
+  +create(categoryBudget: CategoryBudget): Promise<CategoryBudget>
+  +save(categoryBudget: CategoryBudget): Promise<CategoryBudget>
+  +findAllByUser(userId: Identifier): Promise<CategoryBudget[]>
+  +findById(id: Identifier): Promise<CategoryBudget | null>
+  +updateById(id: Identifier, update: UpdateQuery<CategoryBudget>): Promise<CategoryBudget | null>
+  +updateOne(filter: FilterQuery<CategoryBudget>, update: UpdateQuery<CategoryBudget>): Promise<CategoryBudget | null>
+  +findOneByUserCategoryPeriod(params: CategoryBudgetUserCategoryPeriodParams): Promise<CategoryBudget | null>
+  +findByPeriod(params: CategoryBudgetPeriodQuery): Promise<CategoryBudget[]>
+}
+
+class CategoryBudgetUserCategoryPeriodParams {
+  <<interface>>
+  +userId: Identifier
+  +categoryId: Identifier
+  +period: BudgetPeriod
+}
+
+class CategoryBudgetPeriodQuery {
+  <<interface>>
+  +userId: Identifier
+  +period: BudgetPeriod
+  +includeDeleted?: boolean
+}
+
+class CategoryBudgetService {
+  <<interface>>
+  +create(params: CategoryBudgetCreateParams): Promise<CategoryBudget>
+  +findByPeriod(userId: Identifier, period: BudgetPeriod): Promise<CategoryBudget[]>
+  +getById(id: Identifier): Promise<CategoryBudget | null>
+  +deleteById(id: Identifier): Promise<void>
+}
+
+class CategoryBudgetCreateParams {
+  <<interface>>
+  +userId: Identifier
+  +categoryId: Identifier
+  +period: BudgetPeriod
+  +plannedAmount?: number
+  +limitAmount?: number
+  +currency: Currency
+  +note?: string
+  +status: CategoryBudgetStatus
+}
+
+class TransactionModel {
+  <<interface>>
+  +title: string
+  +note?: string
+  +amount: number
+  +currency: Currency
+  +userId: Identifier
+  +categoryId: Identifier
+  +type: TransactionType
+  +occurredAt: Date
+  +deleted: boolean
+  +deletedAt?: Date
+  +createdAt: Date
+}
+
+class TransactionRepository {
+  <<interface>>
+  +create(category: Transaction): Promise<Transaction>
+  +save(category: Transaction): Promise<Transaction>
+  +findAllByUser(userId: Identifier): Promise<Transaction[]>
+  +findPaginatedByUser(params: TransactionListFilter): Promise<TransactionListResult>
+  +findAllByCategory(userId: Identifier, categoryId: Identifier): Promise<Transaction[]>
+  +findById(id: Identifier): Promise<Transaction | null>
+  +getExpenseSummaryByCategory(params: ExpenseSummaryByCategoryParams): Promise<ExpenseCategorySummary[]>
+  +updateById(id: Identifier, update: UpdateQuery<Transaction>): Promise<Transaction | null>
+  +updateOne(filter: FilterQuery<Transaction>, update: UpdateQuery<Transaction>): Promise<Transaction | null>
+}
+
+class ExpenseSummaryByCategoryParams {
+  <<interface>>
+  +userId: Identifier
+  +from: Date
+  +to: Date
+}
+
+class TransactionService {
+  <<interface>>
+  +validateOwnership(transaction: Transaction, userId: Identifier): Promise<void>
+  +create(params: CreateParams): Promise<Transaction>
+  +getById(id: Identifier): Promise<Transaction | null>
+  +deleteById(id: Identifier): Promise<void>
+  +update(transaction: Transaction, params: UpdateParams): Promise<Transaction>
+  +findAllByUser(userId: Identifier): Promise<Transaction[]>
+  +findPaginatedByUser(params: TransactionListFilter): Promise<TransactionListResult>
+  +getExpenseSummaryByCategory(params: ExpenseSummaryByCategoryParams): Promise<ExpenseCategorySummary[]>
+}
+
+class AuditLogModel {
+  <<interface>>
+  +occurredAt: Date
+  +actorType: Actor
+  +actorUserId?: Identifier
+  +targetEntity: TargetEntity
+  +targetId?: Identifier
+  +category: AuditCategory
+  +type: AuditType
+  +message?: MultiLanguage
+  +metadata?: Record<string, unknown>
+  +requestId?: string
+  +correlationId?: string
+  +ip?: string
+  +userAgent?: string
+}
+
+class AuditLogRepository {
+  <<interface>>
+  +create(audit: AuditLog): Promise<AuditLog>
+  +save(audit: AuditLog): Promise<AuditLog>
+  +findById(id: Identifier): Promise<AuditLog | null>
+  +getAuditLogs(filter: AuditLogFilterQuery, sort: AuditLogSortQuery, limit: number, skip: number): Promise<GetAuditLogsResult>
+  +getAll(limit?: number, skip?: number): Promise<AuditLog[]>
+}
+
+class AuditLogService {
+  <<interface>>
+  +log(params: ActionLogParams, context: Context): Promise<AuditLog>
+  +getById(id: Identifier): Promise<AuditLog | null>
+  +getAuditLogs(params: GetAuditLogsParams): Promise<GetAuditLogsResult>
+  +save(auditLog: AuditLog): Promise<AuditLog>
+  +getAll(): Promise<AuditLog[]>
+}
+
+class LogEnricherService {
+  <<interface>>
+  +enrich(auditLog: AuditLog): Promise<EnrichedAuditLog>
+}
+
+class CreateTransactionUsecase {
+  <<interface>>
+}
+
+class GetExpenseChartUsecase {
+  <<interface>>
+}
+
+class SuggestCategoryUsecase {
+  <<interface>>
+}
+
+%% transactions.GetTransactionsUsecase
+class Transactions_GetTransactionsUsecase {
+  <<interface>>
+}
+
+%% transactions.DeleteTransactionUsecase
+class Transactions_DeleteTransactionUsecase {
+  <<interface>>
+}
+
+class CreateCategoryBudgetUsecase {
+  <<interface>>
+}
+
+class GetCategoryBudgetsUsecase {
+  <<interface>>
+}
+
+%% category-budgets.GetTransactionsUsecase
+class CategoryBudgets_GetTransactionsUsecase {
+  <<interface>>
+}
+
+%% category-budgets.DeleteTransactionUsecase
+class CategoryBudgets_DeleteTransactionUsecase {
+  <<interface>>
+}
+
+class LoginUsecase {
+  <<interface>>
+}
+
+class GetMeUsecase {
+  <<interface>>
+}
+
+class ChangePasswordUsecase {
+  <<interface>>
+}
+
+class CreateUserUsecase {
+  <<interface>>
+}
+
+%% users.GetUsersUsecase
+class Users_GetUsersUsecase {
+  <<interface>>
+}
+
+%% users.GetUserUsecase
+class Users_GetUserUsecase {
+  <<interface>>
+}
+
+%% users.DeleteUserUsecase
+class Users_DeleteUserUsecase {
+  <<interface>>
+}
+
+%% users.UpdateUserUsecase
+class Users_UpdateUserUsecase {
+  <<interface>>
+}
+
+%% users.SearchUsersUsecase
+class Users_SearchUsersUsecase {
+  <<interface>>
+}
+
+%% categories.GetUsersUsecase
+class Categories_GetUsersUsecase {
+  <<interface>>
+}
+
+%% categories.GetUserUsecase
+class Categories_GetUserUsecase {
+  <<interface>>
+}
+
+%% categories.DeleteUserUsecase
+class Categories_DeleteUserUsecase {
+  <<interface>>
+}
+
+%% categories.UpdateUserUsecase
+class Categories_UpdateUserUsecase {
+  <<interface>>
+}
+
+%% categories.SearchUsersUsecase
+class Categories_SearchUsersUsecase {
+  <<interface>>
+}
+
+class CreateCategoryUsecase {
+  <<interface>>
+}
+
+class GetAuditLogsUsecase {
+  <<interface>>
+}
+
+class GetAuditLogUsecase {
+  <<interface>>
+}
+
+class Repository~T,E~ {
+  <<interface>>
+  +create(entity: E): Promise<E>
+  +insertMany(entities: E[]): Promise<E[]>
+  +bulkInsert(entities: E[]): Promise<void>
+  +getById(id: Identifier): Promise<E | null>
+  +getByIds(ids: Identifier[]): Promise<E[]>
+  +getByQuery(query: FilterQuery<T>, skip?: number, limit?: number, sort?: SortQuery<T>): Promise<E[]>
+  +getByQueryCount(query: FilterQuery<T>): Promise<number>
+  +getAll(limit?: number): Promise<E[]>
+  +getAllSorted(sort: SortQuery<T>, skip?: number, limit?: number): Promise<E[]>
+  +exists(filter: FilterQuery<T>): Promise<boolean>
+  +getStream(query: FilterQuery<T>, sort?: SortQuery<T>): AsyncIterableIterator<E>
+  +save(entity: E): Promise<E>
+  +updateById(id: Identifier, update: UpdateQuery<T>): Promise<E | null>
+  +updateOne(filter: FilterQuery<T>, update: UpdateQuery<T>): Promise<E | null>
+  +updateByIds(ids: Identifier[], update: UpdateQuery<T>): Promise<E[]>
+  +updateMany(filter: FilterQuery<T>, update: UpdateQuery<T>): Promise<E[]>
+  +bulkUpdate(toUpdate: BulkUpdate<T>[], upsert?: boolean): Promise<void>
+  +bulkSave(entities: E[]): Promise<void>
+  +delete(entity: E): Promise<void>
+  +deleteById(id: Identifier): Promise<void>
+  +deleteByIds(ids: Identifier[]): Promise<void>
+  +deleteMany(filter: FilterQuery<T>): Promise<void>
+  +bulkDeleteByIds(ids: Identifier[]): Promise<void>
+  +transactionalOperation(operations: () => Promise<void>): Promise<void>
+}
+
+class HookNextFunction {
+  <<interface>>
+  +call(error?: Error): any
+}
+
+class YandexTranslateResponse {
+  <<interface>>
+  +translations: YandexTranslation[]
+}
+
+class YandexTranslation {
+  <<interface>>
+  +text: string
+  +detectedLanguageCode?: string
+}
+
+class YandexDetectResponse {
+  <<interface>>
+  +languageCode: Language
+}
+
+BaseModel <|.. UserModel
+BaseModel <|.. RoleModel
+BaseModel <|.. CategoryModel
+BaseModel <|.. CategoryBudgetModel
+BaseModel <|.. TransactionModel
+BaseModel <|.. AuditLogModel
+
+Usecase <|.. CreateTransactionUsecase
+Usecase <|.. Transactions_GetTransactionsUsecase
+Usecase <|.. Transactions_DeleteTransactionUsecase
+Usecase <|.. SuggestCategoryUsecase
+Usecase <|.. GetExpenseChartUsecase
+Usecase <|.. CreateCategoryBudgetUsecase
+Usecase <|.. GetCategoryBudgetsUsecase
+Usecase <|.. CategoryBudgets_GetTransactionsUsecase
+Usecase <|.. CategoryBudgets_DeleteTransactionUsecase
+Usecase <|.. LoginUsecase
+Usecase <|.. GetMeUsecase
+Usecase <|.. ChangePasswordUsecase
+Usecase <|.. CreateUserUsecase
+Usecase <|.. Users_GetUsersUsecase
+Usecase <|.. Users_GetUserUsecase
+Usecase <|.. Users_DeleteUserUsecase
+Usecase <|.. Users_UpdateUserUsecase
+Usecase <|.. Users_SearchUsersUsecase
+Usecase <|.. Categories_GetUsersUsecase
+Usecase <|.. Categories_GetUserUsecase
+Usecase <|.. Categories_DeleteUserUsecase
+Usecase <|.. Categories_UpdateUserUsecase
+Usecase <|.. Categories_SearchUsersUsecase
+Usecase <|.. CreateCategoryUsecase
+Usecase <|.. GetAuditLogsUsecase
+Usecase <|.. GetAuditLogUsecase
+
+%% Usecase interactions
+CreateTransactionUsecase ..> TransactionService : uses
+Transactions_GetTransactionsUsecase ..> TransactionService : uses
+Transactions_DeleteTransactionUsecase ..> TransactionService : uses
+SuggestCategoryUsecase ..> LlmProvider : uses
+SuggestCategoryUsecase ..> CategoryService : uses
+GetExpenseChartUsecase ..> TransactionService : uses
+CreateCategoryBudgetUsecase ..> CategoryBudgetService : uses
+GetCategoryBudgetsUsecase ..> CategoryBudgetService : uses
+CategoryBudgets_GetTransactionsUsecase ..> TransactionService : uses
+CategoryBudgets_DeleteTransactionUsecase ..> TransactionService : uses
+LoginUsecase ..> UserService : uses
+LoginUsecase ..> JwtService : uses
+LoginUsecase ..> Hasher : uses
+GetMeUsecase ..> CurrentUserService : uses
+ChangePasswordUsecase ..> UserService : uses
+ChangePasswordUsecase ..> Hasher : uses
+CreateUserUsecase ..> UserService : uses
+Users_GetUsersUsecase ..> UserService : uses
+Users_GetUserUsecase ..> UserService : uses
+Users_DeleteUserUsecase ..> UserService : uses
+Users_UpdateUserUsecase ..> UserService : uses
+Users_SearchUsersUsecase ..> UserService : uses
+Categories_GetUsersUsecase ..> CategoryService : uses
+Categories_GetUserUsecase ..> CategoryService : uses
+Categories_DeleteUserUsecase ..> CategoryService : uses
+Categories_UpdateUserUsecase ..> CategoryService : uses
+Categories_SearchUsersUsecase ..> CategoryService : uses
+CreateCategoryUsecase ..> CategoryService : uses
+GetAuditLogsUsecase ..> AuditLogService : uses
+GetAuditLogUsecase ..> AuditLogService : uses
+
+%% Service interactions
+UserService ..> UserRepository : uses
+UserService ..> RoleService : uses
+UserService ..> CurrentUserService : uses
+CurrentUserService ..> CurrentUserCacheRepository : uses
+RoleService ..> RoleRepository : uses
+CategoryService ..> CategoryRepository : uses
+CategoryService ..> TranslateService : uses
+CategoryService ..> SlugService : uses
+CategoryBudgetService ..> CategoryBudgetRepository : uses
+TransactionService ..> TransactionRepository : uses
+TransactionService ..> CategoryService : uses
+AuditLogService ..> AuditLogRepository : uses
+AuditLogService ..> LogEnricherService : uses
