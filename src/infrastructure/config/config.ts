@@ -11,6 +11,7 @@ type GeneralConfig = {
     };
     jwt: JwtConfig;
     yandexTranslate: YandexTranslateConfig;
+    openAi: OpenAiConfig;
 };
 
 export type JwtConfig = {
@@ -24,6 +25,12 @@ export type YandexTranslateConfig = {
     apiUrl: string;
     apiKey: string;
     folderId: string;
+};
+
+export type OpenAiConfig = {
+    apiUrl: string;
+    apiKey: string;
+    model: string;
 };
 
 export const config: GeneralConfig = {
@@ -41,5 +48,10 @@ export const config: GeneralConfig = {
         apiUrl: envVars.YANDEX_API_URL || '',
         apiKey: envVars.YANDEX_API_KEY || '',
         folderId: envVars.YANDEX_FOLDER_ID || '',
+    },
+    openAi: {
+        apiUrl: envVars.OPENAI_API_URL || 'https://api.openai.com/v1',
+        apiKey: envVars.OPENAI_API_KEY || '',
+        model: envVars.OPENAI_MODEL || 'gpt-4o-mini',
     },
 };
