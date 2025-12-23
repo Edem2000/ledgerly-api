@@ -80,6 +80,7 @@ export class TransactionRepositoryImpl
             .exec();
 
         return results.map((item) => ({
+            // @ts-ignore
             categoryId: objectIdToIdentifier(item._id) as Identifier,
             total: item.total,
         }));
