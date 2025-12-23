@@ -17,6 +17,8 @@ import {
     DeleteTransactionUsecaseImpl,
 } from 'usecases/transactions/delete-transaction-usecase';
 import { TransactionModule } from 'di/common/modules/domain/entities/transaction-module';
+import { SuggestCategoryUsecase, SuggestCategoryUsecaseImpl } from 'usecases/transactions/suggest-category-usecase';
+import { LlmProvider } from 'domain/_utils/llm';
 
 @Module({
     imports: [UserModule, CategoryModule, TransactionModule, AuditLogModule, UtilsModule],
@@ -53,11 +55,19 @@ import { TransactionModule } from 'di/common/modules/domain/entities/transaction
             },
             inject: [Symbols.domain.transaction.service, Symbols.domain.auditLog.auditLogService],
         },
+        {
+            provide: Symbols.usecases.transactions.suggestCategory,
+            useFactory(categoryService: CategoryService, llmProvider: LlmProvider): SuggestCategoryUsecase {
+                return new SuggestCategoryUsecaseImpl(categoryService, llmProvider);
+            },
+            inject: [Symbols.domain.category.categoryService, Symbols.infrastructure.utils.llm],
+        },
     ],
     exports: [
         Symbols.usecases.transactions.create,
         Symbols.usecases.transactions.get,
         Symbols.usecases.transactions.delete,
+        Symbols.usecases.transactions.suggestCategory,
     ],
 })
 export class TransactionUsecasesModule {}

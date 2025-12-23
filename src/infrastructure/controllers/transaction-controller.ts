@@ -40,6 +40,12 @@ import {
     DeleteTransactionPresenter,
     DeleteTransactionResponseDto,
 } from 'infrastructure/controllers/presenters/transactions/delete-presenter';
+import { SuggestCategoryUsecase } from 'usecases/transactions/suggest-category-usecase';
+import { SuggestCategoryDto } from 'infrastructure/controllers/dtos/transactions/suggest-category-dto';
+import {
+    SuggestCategoryPresenter,
+    SuggestCategoryResponseDto,
+} from 'infrastructure/controllers/presenters/transactions/suggest-category-presenter';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('transactions')
@@ -51,6 +57,8 @@ export class TransactionController {
         private readonly getTransactionsUsecase: GetTransactionsUsecase,
         @Inject(Symbols.usecases.transactions.delete)
         private readonly deleteTransactionUsecase: DeleteTransactionUsecase,
+        @Inject(Symbols.usecases.transactions.suggestCategory)
+        private readonly suggestCategoryUsecase: SuggestCategoryUsecase,
 
         @Inject(Symbols.infrastructure.providers.currentUser)
         private readonly currentUser: CurrentUserProvider,
@@ -126,6 +134,28 @@ export class TransactionController {
             await this.deleteTransactionUsecase.execute({ id }, currentUser, context);
 
             return DeleteTransactionPresenter.present();
+        } catch (error) {
+            throw getExceptionByError(error);
+        }
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @Post('/suggest-category')
+    @AllowRoles(RoleAlias.User)
+    public async suggestCategory(@Body() params: SuggestCategoryDto): Promise<SuggestCategoryResponseDto> {
+        try {
+            const currentUser = await this.currentUser.get();
+            const context = this.currentUser.getContext();
+
+            const { suggestions } = await this.suggestCategoryUsecase.execute(
+                {
+                    title: params.title,
+                },
+                currentUser,
+                context,
+            );
+
+            return SuggestCategoryPresenter.present(suggestions);
         } catch (error) {
             throw getExceptionByError(error);
         }
