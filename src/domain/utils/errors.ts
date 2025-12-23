@@ -97,6 +97,20 @@ export class CategoryBudgetAlreadyExistsError extends CustomError {
     }
 }
 
+export class CategoryBudgetNotFoundError extends CustomError {
+    constructor() {
+        super(
+            {
+                ru: 'Бюджет категории не найден',
+                uz: 'Бюджет категории не найден',
+                en: 'Category budget not found',
+            },
+            10013,
+            HttpStatus.NOT_FOUND,
+        );
+    }
+}
+
 export class CategoryBudgetAmountRequiredError extends CustomError {
     constructor() {
         super(

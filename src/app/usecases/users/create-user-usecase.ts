@@ -17,7 +17,7 @@ type UserCreateParams = {
     };
     password: string;
     phone: string;
-    role: string;
+    role?: string;
 };
 
 type CreateResult = {
@@ -35,7 +35,7 @@ export class CreateUserUsecaseImpl implements CreateUserUsecase {
     ) {}
 
     async execute(params: UserCreateParams, currentUser: CurrentUser, context: Context): Promise<CreateResult> {
-        const role = await this.roleService.findByAlias(params.role);
+        const role = await this.roleService.findByAlias(params.role || RoleAlias.User);
 
         if (!role) {
             throw new RoleNotFoundError();

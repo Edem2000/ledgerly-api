@@ -8,6 +8,8 @@ import {
     Post,
     Query,
     UseGuards,
+    Patch,
+    Param,
 } from '@nestjs/common';
 import { Symbols } from 'di/common';
 import { getExceptionByError } from 'infrastructure/controllers/exceptions/exceptions';
@@ -23,6 +25,8 @@ import { CreateCategoryBudgetDto } from 'infrastructure/controllers/dtos/categor
 import { GetCategoryBudgetsPresenter, GetCategoryBudgetsResponseDto } from 'infrastructure/controllers/presenters/category-budgets/get-presenter';
 import { GetCategoryBudgetsQueryDto } from 'infrastructure/controllers/dtos/category-budgets/get-dto';
 import { GetCategoryBudgetsUsecase } from 'usecases/category-budgets/get-usecase';
+import { UpdateCategoryBudgetDto } from 'infrastructure/controllers/dtos/category-budgets/update-category-budget-dto';
+import { UpdateCategoryBudgetUsecase } from 'usecases/category-budgets/update-usecase';
 
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -33,6 +37,8 @@ export class CategoryBudgetController {
         private readonly createCategoryBudgetUsecase: CreateCategoryBudgetUsecase,
         @Inject(Symbols.usecases.categoryBudgets.get)
         private readonly getCategoryBudgetsUsecase: GetCategoryBudgetsUsecase,
+        @Inject(Symbols.usecases.categoryBudgets.update)
+        private readonly updateCategoryBudgetUsecase: UpdateCategoryBudgetUsecase,
         // @Inject(Symbols.usecases.categoryBudgets.delete)
         // private readonly deleteCategoryBudgetUsecase: DeleteCategoryBudgetUsecase,
 
@@ -55,6 +61,31 @@ export class CategoryBudgetController {
                     limitAmount: params.limitAmount,
                     month: params.month,
                     year: params.year,
+                    note: params.note,
+                },
+                currentUser,
+                context,
+            );
+
+            return CreateCategoryBudgetPresenter.present(budget);
+        } catch (error) {
+            throw getExceptionByError(error);
+        }
+    }
+
+    @Patch(':id')
+    @AllowRoles(RoleAlias.User)
+    public async update(@Param('id') id: string, @Body() params: UpdateCategoryBudgetDto): Promise<CreateCategoryBudgetResponseDto> {
+        try {
+            const currentUser = await this.currentUser.get();
+            const context = this.currentUser.getContext();
+
+            const { budget } = await this.updateCategoryBudgetUsecase.execute(
+                {
+                    id: new EntityId(id),
+                    plannedAmount: params.plannedAmount,
+                    limitAmount: params.limitAmount,
+                    currency: params.currency,
                     note: params.note,
                 },
                 currentUser,

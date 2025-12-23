@@ -23,6 +23,8 @@ export interface CategoryBudgetService {
     findByPeriod(userId: Identifier, period: BudgetPeriod): Promise<CategoryBudget[]>;
     getById(id: Identifier): Promise<CategoryBudget | null>;
     deleteById(id: Identifier): Promise<void>;
+    validateOwnership(category: CategoryBudget, userId: Identifier): Promise<void>;
+    save(entity: CategoryBudget): Promise<CategoryBudget>;
 }
 
 export class CategoryBudgetServiceImpl extends BaseService implements CategoryBudgetService {

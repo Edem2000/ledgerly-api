@@ -8,6 +8,10 @@ import {
     CreateCategoryBudgetUsecaseImpl,
 } from 'usecases/category-budgets/create-usecase';
 import { GetCategoryBudgetsUsecase, GetCategoryBudgetsUsecaseImpl } from 'usecases/category-budgets/get-usecase';
+import {
+    UpdateCategoryBudgetUsecase,
+    UpdateCategoryBudgetUsecaseImpl,
+} from 'usecases/category-budgets/update-usecase';
 
 @Module({
     imports: [CategoryBudgetModule, UtilsModule],
@@ -26,7 +30,18 @@ import { GetCategoryBudgetsUsecase, GetCategoryBudgetsUsecaseImpl } from 'usecas
             },
             inject: [Symbols.domain.categoryBudget.service],
         },
+        {
+            provide: Symbols.usecases.categoryBudgets.update,
+            useFactory(categoryBudgetService: CategoryBudgetService): UpdateCategoryBudgetUsecase {
+                return new UpdateCategoryBudgetUsecaseImpl(categoryBudgetService);
+            },
+            inject: [Symbols.domain.categoryBudget.service],
+        },
     ],
-    exports: [Symbols.usecases.categoryBudgets.create, Symbols.usecases.categoryBudgets.get],
+    exports: [
+        Symbols.usecases.categoryBudgets.create,
+        Symbols.usecases.categoryBudgets.get,
+        Symbols.usecases.categoryBudgets.update,
+    ],
 })
 export class CategoryBudgetUsecasesModule {}

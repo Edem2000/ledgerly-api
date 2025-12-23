@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsPhoneNumber, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber, IsString } from 'class-validator';
 import { Language } from 'domain/_core';
 
 export class RegisterUserDto {
@@ -20,6 +20,7 @@ export class RegisterUserDto {
     @IsNotEmpty()
     password: string;
 
+    @IsOptional()
     @IsString()
     @IsNotEmpty()
     role: string; //role alias
