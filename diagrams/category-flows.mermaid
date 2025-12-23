@@ -1,0 +1,19 @@
+flowchart TD
+    %% Category edit flow (client -> API)
+    A[User opens category list] --> B[Selects category to edit]
+    B --> C[Edits title/color/icon]
+    C --> D[Submit update form]
+    D --> E[PATCH /categories/:id request]
+
+    %% Category update flow (API -> domain)
+    E --> F[Category controller]
+    F --> G[UpdateCategory usecase]
+    G --> H[CategoryService.getById]
+    H --> I{Category exists?}
+    I -- No --> J[Return 404]
+    I -- Yes --> K[CategoryService.validateOwnership]
+    K --> L{User owns category?}
+    L -- No --> M[Return 403]
+    L -- Yes --> N[CategoryService.update]
+    N --> O[CategoryRepository.save]
+    O --> P[Return updated category]

@@ -27,6 +27,11 @@ All endpoints are mounted under the root NestJS application. Unless marked as **
 
 - `POST /categories` (role: `user`)
   - Body: `{ title, color, icon? }`
+- `GET /categories` (role: `user`)
+- `GET /categories/:id` (role: `user`)
+- `PATCH /categories/:id` (role: `user`)
+  - Body: `{ title?, color?, icon? }`
+- `DELETE /categories/:id` (role: `user`)
 
 ### Category budgets
 

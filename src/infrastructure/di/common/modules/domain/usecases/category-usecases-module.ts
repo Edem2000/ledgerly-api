@@ -9,6 +9,10 @@ import { TranslateService } from 'domain/_utils/translate';
 import { SlugService } from 'domain/_utils/slug';
 import { CategoryService } from 'domain/category';
 import { CreateCategoryUsecase, CreateCategoryUsecaseImpl } from 'usecases/categories/create-category-usecase';
+import { GetCategoriesUsecase, GetCategoriesUsecaseImpl } from 'usecases/categories/get-categories-usecase';
+import { GetCategoryUsecase, GetCategoryUsecaseImpl } from 'usecases/categories/get-category-usecase';
+import { UpdateCategoryUsecase, UpdateCategoryUsecaseImpl } from 'usecases/categories/update-category-usecase';
+import { DeleteCategoryUsecase, DeleteCategoryUsecaseImpl } from 'usecases/categories/delete-category-usecase';
 
 @Module({
     imports: [UserModule, CategoryModule, AuditLogModule, UtilsModule],
@@ -30,80 +34,56 @@ import { CreateCategoryUsecase, CreateCategoryUsecaseImpl } from 'usecases/categ
                 Symbols.domain.auditLog.auditLogService,
             ],
         },
-        // {
-        //   provide: Symbols.usecases.users.get,
-        //   useFactory(
-        //     userService: UserService,
-        //     roleService: RoleService,
-        //   ): GetUsersUsecase {
-        //     return new GetUsersUsecaseImpl(userService, roleService);
-        //   },
-        //   inject: [
-        //     Symbols.domain.user.userService,
-        //     Symbols.domain.role.roleService,
-        //   ],
-        // },
-        // {
-        //   provide: Symbols.usecases.users.search,
-        //   useFactory(
-        //     userService: UserService,
-        //     roleService: RoleService,
-        //   ): SearchUsersUsecase {
-        //     return new SearchUsersUsecaseImpl(userService, roleService);
-        //   },
-        //   inject: [
-        //     Symbols.domain.user.userService,
-        //     Symbols.domain.role.roleService,
-        //   ],
-        // },
-        // {
-        //   provide: Symbols.usecases.users.getOne,
-        //   useFactory(
-        //     userService: UserService,
-        //     roleService: RoleService,
-        //   ): GetUserUsecase {
-        //     return new GetUserUsecaseImpl(userService, roleService);
-        //   },
-        //   inject: [
-        //     Symbols.domain.user.userService,
-        //     Symbols.domain.role.roleService,
-        //   ],
-        // },
-        // {
-        //   provide: Symbols.usecases.users.deleteUser,
-        //   useFactory(
-        //     userService: UserService,
-        //     auditLogService: AuditLogService,
-        //   ): DeleteUserUsecase {
-        //     return new DeleteUserUsecaseImpl(userService, auditLogService);
-        //   },
-        //   inject: [
-        //     Symbols.domain.user.userService,
-        //     Symbols.domain.auditLog.auditLogService,
-        //   ],
-        // },
-        // {
-        //   provide: Symbols.usecases.users.updateUser,
-        //   useFactory(
-        //     userService: UserService,
-        //     roleService: RoleService,
-        //     auditLogService: AuditLogService,
-        //   ): UpdateUserUsecase {
-        //     return new UpdateUserUsecaseImpl(userService, roleService, auditLogService);
-        //   },
-        //   inject: [
-        //     Symbols.domain.user.userService,
-        //     Symbols.domain.role.roleService,
-        //     Symbols.domain.auditLog.auditLogService,
-        //   ],
-        // },
+        {
+            provide: Symbols.usecases.categories.get,
+            useFactory(categoryService: CategoryService): GetCategoriesUsecase {
+                return new GetCategoriesUsecaseImpl(categoryService);
+            },
+            inject: [Symbols.domain.category.categoryService],
+        },
+        {
+            provide: Symbols.usecases.categories.getOne,
+            useFactory(categoryService: CategoryService): GetCategoryUsecase {
+                return new GetCategoryUsecaseImpl(categoryService);
+            },
+            inject: [Symbols.domain.category.categoryService],
+        },
+        {
+            provide: Symbols.usecases.categories.update,
+            useFactory(
+                categoryService: CategoryService,
+                translateService: TranslateService,
+                slugService: SlugService,
+                auditLogService: AuditLogService,
+            ): UpdateCategoryUsecase {
+                return new UpdateCategoryUsecaseImpl(
+                    categoryService,
+                    translateService,
+                    slugService,
+                    auditLogService,
+                );
+            },
+            inject: [
+                Symbols.domain.category.categoryService,
+                Symbols.infrastructure.utils.translate,
+                Symbols.infrastructure.utils.slug,
+                Symbols.domain.auditLog.auditLogService,
+            ],
+        },
+        {
+            provide: Symbols.usecases.categories.delete,
+            useFactory(categoryService: CategoryService, auditLogService: AuditLogService): DeleteCategoryUsecase {
+                return new DeleteCategoryUsecaseImpl(categoryService, auditLogService);
+            },
+            inject: [Symbols.domain.category.categoryService, Symbols.domain.auditLog.auditLogService],
+        },
     ],
     exports: [
         Symbols.usecases.categories.create,
-        // Symbols.usecases.categories.get,
-        // Symbols.usecases.categories.getOne,
-        // Symbols.usecases.categories.delete,
-        // Symbols.usecases.categories.update,
+        Symbols.usecases.categories.get,
+        Symbols.usecases.categories.getOne,
+        Symbols.usecases.categories.delete,
+        Symbols.usecases.categories.update,
         // Symbols.usecases.categories.search,
     ],
 })
