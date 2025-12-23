@@ -10,12 +10,15 @@ import { CategoryUsecasesModule } from 'di/common/modules/domain/usecases/catego
 import { CategoryController } from 'infrastructure/controllers/category-controller';
 import { TransactionController } from 'infrastructure/controllers/transaction-controller';
 import { TransactionUsecasesModule } from 'di/common/modules/domain/usecases/transaction-usecases-module';
+import { CategoryBudgetUsecasesModule } from 'di/common/modules/domain/usecases/category-budget-usecases-module';
+import { CategoryBudgetController } from 'infrastructure/controllers/budget-controller';
 
 @Module({
     imports: [
         UserUsecasesModule,
         CategoryUsecasesModule,
         TransactionUsecasesModule,
+        CategoryBudgetUsecasesModule,
         AuditLogUsecasesModule,
         AuthModule,
         ProvidersModule,
@@ -27,6 +30,12 @@ import { TransactionUsecasesModule } from 'di/common/modules/domain/usecases/tra
         //   useClass: JwtAuthGuard,
         // },
     ],
-    controllers: [UserController, CategoryController, TransactionController, AuditLogController],
+    controllers: [
+        UserController,
+        CategoryController,
+        TransactionController,
+        CategoryBudgetController,
+        AuditLogController,
+    ],
 })
 export class AppModule {}

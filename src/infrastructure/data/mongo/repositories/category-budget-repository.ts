@@ -23,7 +23,7 @@ export class CategoryBudgetRepositoryImpl extends MongooseRepository<CategoryBud
     }
 
 
-    async findOne(params: {
+    async findOneByUserCategoryPeriod(params: {
         userId: Identifier;
         categoryId: Identifier;
         period: BudgetPeriod;
@@ -33,6 +33,7 @@ export class CategoryBudgetRepositoryImpl extends MongooseRepository<CategoryBud
             categoryId: params.categoryId,
             'period.year': params.period.year,
             'period.month': params.period.month,
+            deleted: false,
         });
 
         return doc ? this.toEntity(doc) : null;

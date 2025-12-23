@@ -12,6 +12,8 @@ import {
 } from 'domain/category-budget';
 import { CategoryBudgetSchema } from 'data/mongo/schemas/category-budget-schema';
 import { CategoryBudgetRepositoryImpl } from 'data/mongo/repositories/category-budget-repository';
+import { CategoryModule } from 'di/common/modules/domain/entities/category-module';
+import { CategoryService } from 'domain/category';
 
 @Module({
     imports: [
@@ -23,6 +25,7 @@ import { CategoryBudgetRepositoryImpl } from 'data/mongo/repositories/category-b
             },
         ]),
         UtilsModule,
+        CategoryModule,
     ],
     providers: [
         {
@@ -34,10 +37,13 @@ import { CategoryBudgetRepositoryImpl } from 'data/mongo/repositories/category-b
         },
         {
             provide: Symbols.domain.categoryBudget.service,
-            useFactory(repository: CategoryBudgetRepository): CategoryBudgetService {
-                return new CategoryBudgetServiceImpl(repository);
+            useFactory(
+                repository: CategoryBudgetRepository,
+                categoryService: CategoryService,
+            ): CategoryBudgetService {
+                return new CategoryBudgetServiceImpl(repository, categoryService);
             },
-            inject: [Symbols.domain.categoryBudget.repository],
+            inject: [Symbols.domain.categoryBudget.repository, Symbols.domain.category.categoryService],
         },
     ],
     exports: [Symbols.domain.categoryBudget.repository, Symbols.domain.categoryBudget.service],

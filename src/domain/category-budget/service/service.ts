@@ -1,11 +1,13 @@
-import { BaseService, Identifier, MultiLanguage } from 'domain/_core';
-import { CategoryRepository } from 'domain/category/repository/repository';
-import { Category } from 'domain/category/category';
-import { CategoryStatus } from 'domain/category/category-state';
-import { CreateParams, UpdateParams } from 'domain/category/service/types';
-import { BadRequestException, ForbiddenException } from '@nestjs/common';
+import { BaseService, Identifier } from 'domain/_core';
 import { BudgetPeriod, CategoryBudget, CategoryBudgetRepository, CategoryBudgetStatus } from 'domain/category-budget';
 import { Currency } from 'domain/transaction';
+import { CategoryService } from 'domain/category';
+import {
+    AccessDeniedError,
+    CategoryBudgetAlreadyExistsError,
+    CategoryBudgetAmountRequiredError,
+    CategoryNotFoundError,
+} from 'domain/utils/errors';
 
 export interface CategoryBudgetService {
     create(params: {
@@ -23,7 +25,10 @@ export interface CategoryBudgetService {
 }
 
 export class CategoryBudgetServiceImpl extends BaseService implements CategoryBudgetService {
-    constructor(private repository: CategoryBudgetRepository) {
+    constructor(
+        private repository: CategoryBudgetRepository,
+        private categoryService: CategoryService,
+    ) {
         super('categoryBudget');
     }
 
@@ -39,11 +44,32 @@ export class CategoryBudgetServiceImpl extends BaseService implements CategoryBu
     }): Promise<CategoryBudget> {
         this.ensureHasAtLeastOneValue(params.plannedAmount, params.limitAmount);
 
-        const category = new CategoryBudget({
+        const ownedCategory = await this.categoryService.getById(params.categoryId);
+        if (!ownedCategory) {
+            throw new CategoryNotFoundError();
+        }
+
+        try {
+            await this.categoryService.validateOwnership(ownedCategory, params.userId);
+        } catch (error) {
+            throw new AccessDeniedError();
+        }
+
+        const existing = await this.repository.findOneByUserCategoryPeriod({
+            userId: params.userId,
+            categoryId: params.categoryId,
+            period: params.period,
+        });
+
+        if (existing) {
+            throw new CategoryBudgetAlreadyExistsError();
+        }
+
+        const categoryBudget = new CategoryBudget({
             ...params,
             deleted: false,
         });
-        return await this.repository.create(category);
+        return await this.repository.create(categoryBudget);
     }
 
     findByPeriod(userId: Identifier, period: BudgetPeriod): Promise<CategoryBudget[]> {
@@ -109,7 +135,7 @@ export class CategoryBudgetServiceImpl extends BaseService implements CategoryBu
 
     public async validateOwnership(category: CategoryBudget, userId: Identifier): Promise<void> {
         if (category.userId.toString() !== userId.toString()) {
-            throw new ForbiddenException('You do not own this category');
+            throw new AccessDeniedError();
         }
     }
 
@@ -134,7 +160,7 @@ export class CategoryBudgetServiceImpl extends BaseService implements CategoryBu
 
     private ensureHasAtLeastOneValue(plannedAmount?: number, limitAmount?: number) {
         if (plannedAmount == null && limitAmount == null) {
-            throw new BadRequestException('Either plannedAmount or limitAmount must be provided');
+            throw new CategoryBudgetAmountRequiredError();
         }
     }
 }

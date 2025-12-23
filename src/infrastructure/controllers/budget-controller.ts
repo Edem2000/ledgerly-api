@@ -1,16 +1,9 @@
 import {
     Body,
     Controller,
-    Delete,
-    Get,
-    HttpCode,
-    HttpStatus,
     Inject,
-    Param,
     Post,
-    Query,
     UseGuards,
-    UsePipes,
 } from '@nestjs/common';
 import { Symbols } from 'di/common';
 import { getExceptionByError } from 'infrastructure/controllers/exceptions/exceptions';
@@ -23,18 +16,10 @@ import { AllowRoles } from 'infrastructure/services/decorators/roles';
 import { CreateCategoryBudgetPresenter, CreateCategoryBudgetResponseDto } from 'infrastructure/controllers/presenters/category-budgets/create-presenter';
 import { CreateCategoryBudgetUsecase } from 'usecases/category-budgets/create-usecase';
 import { CreateCategoryBudgetDto } from 'infrastructure/controllers/dtos/category-budgets/create-category-budget-dto';
-import { PaginationPipe } from 'infrastructure/controllers/pipes/pagination-pipe';
-import { GetCategoryBudgetsQueryDto } from 'infrastructure/controllers/dtos/category-budgets/get-dto';
-import { GetCategoryBudgetsPresenter, GetCategoryBudgetsResponseDto } from 'infrastructure/controllers/presenters/category-budgets/get-presenter';
-import { DeleteCategoryBudgetDto } from 'infrastructure/controllers/dtos/category-budgets/delete-dto';
-import {
-    DeleteCategoryBudgetPresenter,
-    DeleteCategoryBudgetResponseDto,
-} from 'infrastructure/controllers/presenters/category-budgets/delete-presenter';
 
 
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Controller('budgets')
+@Controller('category-budgets')
 export class CategoryBudgetController {
     constructor(
         @Inject(Symbols.usecases.categoryBudgets.create)
@@ -59,9 +44,11 @@ export class CategoryBudgetController {
                 {
                     categoryId: new EntityId(params.categoryId),
                     currency: params.currency,
+                    plannedAmount: params.plannedAmount,
+                    limitAmount: params.limitAmount,
                     month: params.month,
                     year: params.year,
-                    note: params.note
+                    note: params.note,
                 },
                 currentUser,
                 context,

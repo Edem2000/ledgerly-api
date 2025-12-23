@@ -9,7 +9,7 @@ export interface CategoryBudgetRepository {
     findById(id: Identifier): Promise<CategoryBudget | null>;
     updateById(id: Identifier, update: UpdateQuery<CategoryBudget>): Promise<CategoryBudget | null>;
     updateOne(filter: FilterQuery<CategoryBudget>, update: UpdateQuery<CategoryBudget>): Promise<CategoryBudget | null>;
-    findOne(params: {
+    findOneByUserCategoryPeriod(params: {
         userId: Identifier;
         categoryId: Identifier;
         period: BudgetPeriod;
@@ -20,10 +20,4 @@ export interface CategoryBudgetRepository {
         period: BudgetPeriod;
         includeDeleted?: boolean;
     }): Promise<CategoryBudget[]>;
-
-    findOne(params: {
-        userId: Identifier;
-        categoryId: Identifier;
-        period: BudgetPeriod;
-    }): Promise<CategoryBudget | null>;
 }
