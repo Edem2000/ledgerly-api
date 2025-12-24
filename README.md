@@ -1,4 +1,32 @@
-# Ledgerly API
+# Ledgerly - Personal Finance Assistant
+
+## Quick testing (live demo)
+- URL: https://ledgerly.uz
+- Login: test@gmail.com
+- Password: 123456789
+
+(Please, note that requests might be slower than designed because of remote DB)
+
+## Documentation and diagrams
+- Docs: `docs/` (`docs/PRD.md`, `docs/design.md`, `docs/testing.md`, `docs/sdlc.md`)
+- Diagrams: `diagrams/` (`diagrams/uml.mermaid`, `diagrams/create-category.mermaid`, `diagrams/create-transaction.mermaid`, `diagrams/suggest-category.mermaid`)
+
+## Prerequisites for testing on localhost
+- Please note that for testing the project on localhost you will need secret keys and API tokens that cannot be shared via Github.
+- Contact Edem Veliev (edem010100@gmail.com) for further info and accesses
+
+## Build and run
+- Install dependencies: `npm install`
+- Build: `npm run build`
+- Run (dev): `npm run start:dev`
+- Run (prod): `npm run start:prod`
+
+## Build and run frontend
+- Clone repo: `git clone "https://github.com/Edem2000/ledgerly-front"`
+- Install dependencies: `npm install`
+- Run (dev): `npm run dev`
+
+# Ledgerly API Info
 
 Ledgerly API is a NestJS-based backend for managing users, categories, transactions, category budgets, and audit logs. The project follows a layered architecture with domain models/services, application use cases, and infrastructure controllers/services.
 
