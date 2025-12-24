@@ -1,6 +1,8 @@
 # Ledgerly - Personal Finance Assistant
 
 ## Quick testing (live demo)
+
+- (UPD 24.12: Some CORS problem ongoing, trying to fix. please, give me some time to manage with it)
 - URL: https://ledgerly.uz
 - Login: test@gmail.com
 - Password: 123456789
