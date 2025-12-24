@@ -11,6 +11,12 @@ export interface TransactionRepository {
     findAllByCategory(userId: Identifier, categoryId: Identifier): Promise<Transaction[]>;
     findById(id: Identifier): Promise<Transaction | null>;
     getExpenseSummaryByCategory(params: { userId: Identifier; from: Date; to: Date }): Promise<ExpenseCategorySummary[]>;
+    getSpentByCategoryAndPeriod(params: {
+        userId: Identifier;
+        categoryId: Identifier;
+        year: number;
+        month: number;
+    }): Promise<number>;
     updateById(id: Identifier, update: UpdateQuery<Transaction>): Promise<Transaction | null>;
     updateOne(filter: FilterQuery<Transaction>, update: UpdateQuery<Transaction>): Promise<Transaction | null>;
 }

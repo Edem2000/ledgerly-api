@@ -61,7 +61,6 @@ export class GetExpenseChartUsecaseImpl implements GetExpenseChartUsecase {
                 total: summary.total,
             });
         }
-
         return { items };
     }
 

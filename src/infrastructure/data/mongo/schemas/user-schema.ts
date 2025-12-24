@@ -4,7 +4,7 @@ import { BaseSchema } from 'data/mongo/schemas/base-schema';
 import { CollectionNames } from 'di/common';
 import { UserStatuses } from 'domain/user/user-state';
 import { identifierToObjectId, objectIdToIdentifier } from 'data';
-import { Identifier } from 'domain/_core';
+import { Identifier, Language } from 'domain/_core';
 
 export const UserSchema: BaseSchema<UserModel> = new BaseSchema(
     {
@@ -35,6 +35,10 @@ export const UserSchema: BaseSchema<UserModel> = new BaseSchema(
         },
         phone: {
             type: String,
+        },
+        language: {
+            type: String,
+            enum: Language
         },
         role: {
             type: Types.ObjectId,

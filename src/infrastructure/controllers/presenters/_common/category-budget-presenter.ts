@@ -2,7 +2,7 @@ import { HexString } from 'domain/_core';
 import { CategoryBudget } from 'domain/category-budget';
 
 export class CategoryBudgetPresenter {
-    public static present(entity: CategoryBudget): CategoryBudgetResponseDto {
+    public static present(entity: CategoryBudget, spent?: number): CategoryBudgetResponseDto {
         return {
             id: entity.id.toString(),
             categoryId: entity.categoryId.toString(),
@@ -12,6 +12,7 @@ export class CategoryBudgetPresenter {
             currency: entity.currency,
             note: entity.note,
             status: entity.status,
+            spent,
         };
     }
 }
@@ -25,4 +26,5 @@ export type CategoryBudgetResponseDto = {
     currency: string;
     note?: string;
     status: string;
+    spent?: number;
 }

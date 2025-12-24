@@ -14,7 +14,10 @@ async function bootstrap() {
             transform: true, // optional: transforms payloads to DTO class instances
         }),
     );
-    app.enableCors();
+    app.enableCors({
+        origin: ['https://ledgerly.uz', 'https://www.ledgerly.uz'],
+        credentials: true,
+    });
     app.useStaticAssets(join(process.cwd(), 'storage'), {
         prefix: '/storage/',
     });

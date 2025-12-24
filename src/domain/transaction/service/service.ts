@@ -19,6 +19,7 @@ export interface TransactionService {
     findAllByUser(userId: Identifier): Promise<Transaction[]>;
     findPaginatedByUser(params: TransactionListFilter): Promise<TransactionListResult>;
     getExpenseSummaryByCategory(params: { userId: Identifier; from: Date; to: Date }): Promise<ExpenseCategorySummary[]>;
+    getSpentByCategoryAndPeriod(params: { userId: Identifier; categoryId: Identifier; year: number; month: number }): Promise<number>;
 }
 
 export class TransactionServiceImpl extends BaseService implements TransactionService {
@@ -78,6 +79,15 @@ export class TransactionServiceImpl extends BaseService implements TransactionSe
         to: Date;
     }): Promise<ExpenseCategorySummary[]> {
         return await this.repository.getExpenseSummaryByCategory(params);
+    }
+
+    public async getSpentByCategoryAndPeriod(params: {
+        userId: Identifier;
+        categoryId: Identifier;
+        year: number;
+        month: number;
+    }): Promise<number> {
+        return await this.repository.getSpentByCategoryAndPeriod(params);
     }
 
     public async save(entity: Transaction): Promise<Transaction> {

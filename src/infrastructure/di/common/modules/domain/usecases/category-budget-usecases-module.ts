@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { Symbols } from 'di/common';
 import { CategoryBudgetModule } from 'di/common/modules/domain/entities/category-budget-module';
+import { TransactionModule } from 'di/common/modules/domain/entities/transaction-module';
 import { UtilsModule } from 'di/common/modules/infrastructure/utils/utils-module';
 import { CategoryBudgetService } from 'domain/category-budget';
+import { TransactionService } from 'domain/transaction';
 import {
     CreateCategoryBudgetUsecase,
     CreateCategoryBudgetUsecaseImpl,
@@ -14,7 +16,7 @@ import {
 } from 'usecases/category-budgets/update-usecase';
 
 @Module({
-    imports: [CategoryBudgetModule, UtilsModule],
+    imports: [CategoryBudgetModule, TransactionModule, UtilsModule],
     providers: [
         {
             provide: Symbols.usecases.categoryBudgets.create,
@@ -25,10 +27,13 @@ import {
         },
         {
             provide: Symbols.usecases.categoryBudgets.get,
-            useFactory(categoryBudgetService: CategoryBudgetService): GetCategoryBudgetsUsecase {
-                return new GetCategoryBudgetsUsecaseImpl(categoryBudgetService);
+            useFactory(
+                categoryBudgetService: CategoryBudgetService,
+                transactionService: TransactionService,
+            ): GetCategoryBudgetsUsecase {
+                return new GetCategoryBudgetsUsecaseImpl(categoryBudgetService, transactionService);
             },
-            inject: [Symbols.domain.categoryBudget.service],
+            inject: [Symbols.domain.categoryBudget.service, Symbols.domain.transaction.service],
         },
         {
             provide: Symbols.usecases.categoryBudgets.update,

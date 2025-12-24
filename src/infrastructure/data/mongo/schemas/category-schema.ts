@@ -65,5 +65,5 @@ export const CategorySchema: BaseSchema<CategoryModel> = new BaseSchema(
     { timestamps: true, collection: CollectionNames.categories },
 );
 
-CategorySchema.index({ userId: 1, title: 1 }, { unique: true });
-CategorySchema.index({ userId: 1, alias: 1 }, { unique: true });
+CategorySchema.index({ userId: 1, title: 1, deleted: 1 }, { unique: true });
+CategorySchema.index({ userId: 1, alias: 1, deleted: 1 }, { unique: true });

@@ -4,6 +4,7 @@ import { CurrentUser } from 'domain/_utils/auth/types';
 
 export class CategoryPresenter {
     public static present(category: Category, currentUser?: CurrentUser): CategoryResponseDto {
+        console.log(currentUser);
         return {
             id: category.id.toString(),
             title: category.title[currentUser?.language || Language.Russian],

@@ -86,6 +86,44 @@ export class TransactionRepositoryImpl
         }));
     }
 
+    public async getSpentByCategoryAndPeriod(params: {
+        userId: Identifier;
+        categoryId: Identifier;
+        year: number;
+        month: number;
+    }): Promise<number> {
+        const { userId, categoryId, year, month } = params;
+
+        // Create date range for the month
+        const from = new Date(year, month - 1, 1);
+        const to = new Date(year, month, 1);
+
+        const result = await this.model
+            .aggregate<{ total: number }>([
+                {
+                    $match: {
+                        userId: identifierToObjectId(userId),
+                        categoryId: identifierToObjectId(categoryId),
+                        deleted: false,
+                        type: TransactionType.Expense,
+                        occurredAt: {
+                            $gte: from,
+                            $lt: to,
+                        },
+                    },
+                },
+                {
+                    $group: {
+                        _id: null,
+                        total: { $sum: '$amount' },
+                    },
+                },
+            ])
+            .exec();
+
+        return result.length > 0 ? result[0].total : 0;
+    }
+
     public async findById(id: Identifier): Promise<Transaction | null> {
         return await this.findOne({ _id: id, deleted: false });
     }

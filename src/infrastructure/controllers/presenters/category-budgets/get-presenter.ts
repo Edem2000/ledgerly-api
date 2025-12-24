@@ -6,11 +6,11 @@ import {
 } from 'infrastructure/controllers/presenters/_common/category-budget-presenter';
 
 export class GetCategoryBudgetsPresenter {
-    static present(budgets: CategoryBudget[]): GetCategoryBudgetsResponseDto {
+    static present(budgets: (CategoryBudget & { spent?: number })[]): GetCategoryBudgetsResponseDto {
         return {
             success: true,
-            data: budgets.map((transaction) => {
-                return CategoryBudgetPresenter.present(transaction);
+            data: budgets.map((budget) => {
+                return CategoryBudgetPresenter.present(budget, (budget as any).spent);
             }),
         };
     }
