@@ -58,17 +58,23 @@ export class OpenAiProvider implements LlmProvider {
     }
 
     private loadSystemPrompt(): string {
-        const promptPath = path.join(__dirname, 'system-prompt.txt');
-
-        if (fs.existsSync(promptPath)) {
-            return fs.readFileSync(promptPath, 'utf-8');
-        }
-
-        if (fs.existsSync(DEFAULT_PROMPT_PATH)) {
-            return fs.readFileSync(DEFAULT_PROMPT_PATH, 'utf-8');
-        }
-
-        throw new Error('System prompt for OpenAiProvider not found');
+        return (
+            'You are an assistant that suggests transaction categories.\n' +
+            '\n' +
+            'Return ONLY valid JSON with this shape:\n' +
+            '{\n' +
+            '  "suggestions": [\n' +
+            '    { "title": "string", "isNew": true }\n' +
+            '  ]\n' +
+            '}\n' +
+            '\n' +
+            'Rules:\n' +
+            '- Use the provided existing categories exactly when they fit; set isNew to false.\n' +
+            '- If no existing category fits, propose new categories; set isNew to true.\n' +
+            '- Suggest at most the requested maxSuggestions.\n' +
+            '- Keep titles concise and user-friendly.\n' +
+            '- Do not include any extra commentary or formatting outside JSON.\n'
+        );
     }
 
     private parseSuggestions(content: string, maxSuggestions: number): LlmCategorySuggestion[] {

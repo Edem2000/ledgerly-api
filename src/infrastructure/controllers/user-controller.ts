@@ -78,6 +78,9 @@ export class UserController {
         @Inject(Symbols.infrastructure.providers.currentUser)
         private readonly currentUser: CurrentUserProvider,
     ) {}
+    @Get('/health')
+    @Public()
+    health() { return { ok: true }; }
 
     @Post('/register')
     @Public()

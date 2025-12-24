@@ -14,9 +14,23 @@ async function bootstrap() {
             transform: true, // optional: transforms payloads to DTO class instances
         }),
     );
+    app.use((req, res, next) => {
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Access-Control-Allow-Methods', '*');
+        res.header('Access-Control-Allow-Headers', '*');
+
+        if (req.method === 'OPTIONS') {
+            return res.sendStatus(204);
+        }
+
+        next();
+    });
     app.enableCors({
-        origin: ['https://ledgerly.uz', 'https://www.ledgerly.uz'],
-        credentials: true,
+        origin: true,                // ✅ allow any origin
+        methods: '*',                // ✅ allow all methods
+        allowedHeaders: '*',         // ✅ allow all headers
+        credentials: false,          // ⚠️ MUST be false with origin:true
+        optionsSuccessStatus: 204,   // preflight OK
     });
     app.useStaticAssets(join(process.cwd(), 'storage'), {
         prefix: '/storage/',

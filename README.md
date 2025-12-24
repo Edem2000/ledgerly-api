@@ -2,12 +2,10 @@
 
 ## Quick testing (live demo)
 
-- (UPD 24.12: Some CORS problem ongoing, trying to fix. please, give me some time to manage with it)
+- (For some reason, api requests are really slow - it seems that remote DB has some blocking firewall. Please, be patient while testing)
 - URL: https://ledgerly.uz
 - Login: test@gmail.com
 - Password: 123456789
-
-(Please, note that requests might be slower than designed because of remote DB)
 
 ## Documentation and diagrams
 - Docs: `docs/` (`docs/PRD.md`, `docs/design.md`, `docs/testing.md`, `docs/sdlc.md`)
