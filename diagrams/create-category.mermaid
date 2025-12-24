@@ -1,0 +1,72 @@
+sequenceDiagram
+    autonumber
+    actor User as Actor
+    participant API as CategoryController
+    participant Auth as JwtAuthGuard/RolesGuard
+    participant Presenter as CreateCategoryPresenter
+    participant CurrentUser as CurrentUserProvider
+    participant UC as CreateCategoryUsecase
+    participant Translate as TranslateService
+    participant Slug as SlugService
+    participant CatService as CategoryService
+    participant CatRepo as CategoryRepository
+    participant Audit as AuditLogService
+    participant AuditRepo as AuditLogRepository
+    participant DB as Database
+
+    User->>API: POST /categories (title, color, icon?)
+    API->>Auth: Validate JWT + role
+    Auth-->>API: Auth context
+
+    API->>CurrentUser: get()
+    CurrentUser-->>API: currentUser
+    API->>UC: execute(params, currentUser, context)
+
+    UC->>UC: init MultiLanguage title
+    loop for each language in AllLanguages
+        alt language == currentUser.language
+            UC->>UC: set title = params.title
+        else other language
+            UC->>Translate: translate(title, target, source)
+            Translate-->>UC: translated title
+        end
+    end
+
+    UC->>Slug: createSlug(multilanguageTitle.en)
+    Slug-->>UC: alias
+
+    UC->>CatService: findAllByUser(userId)
+    CatService->>CatRepo: findAllByUser(userId)
+    CatRepo->>DB: SELECT * FROM categories WHERE user_id = ? AND deleted = false
+    DB-->>CatRepo: categories
+    CatRepo-->>CatService: categories
+    CatService-->>UC: categories
+
+    alt alias already exists
+        UC-->>API: CategoryAlreadyExistsError
+        API-->>User: 409/400
+    else unique alias
+        UC->>CatService: create({ title, alias, color, icon, userId })
+        CatService->>CatRepo: create(category)
+        CatRepo->>DB: INSERT INTO categories (...)
+        DB-->>CatRepo: inserted row (id)
+        CatRepo-->>CatService: category
+        CatService-->>UC: category
+
+        UC->>Audit: log(CategoryCreate, actorUserId, targetId, context)
+        Audit->>AuditRepo: create(auditLog)
+        AuditRepo->>DB: INSERT INTO audit_logs (...)
+        DB-->>AuditRepo: inserted row
+        AuditRepo-->>Audit: auditLog
+        Audit-->>UC: auditLog
+
+        UC-->>API: category
+        API->>Presenter: present(category)
+        Presenter-->>API: response DTO
+        API-->>User: 201 Created (category)
+    end
+
+    alt audit log failure
+        Audit-->>UC: error (caught)
+        UC->>UC: continue without failing request
+    end

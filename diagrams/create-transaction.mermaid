@@ -1,0 +1,46 @@
+sequenceDiagram
+    autonumber
+    actor User as Actor
+    participant API as TransactionController
+    participant Auth as AuthMiddleware
+    participant CurrentUser as CurrentUserService
+    participant UC as CreateTransactionUsecase
+    participant TxService as TransactionService
+    participant CatService as CategoryService
+    participant CatRepo as CategoryRepository
+    participant TxRepo as TransactionRepository
+    participant DB as Database
+
+    User->>API: POST /transactions (title, amount, categoryId, currency, occurredAt, note)
+    API->>Auth: Validate JWT
+    Auth->>CurrentUser: getCurrentUser()
+    CurrentUser-->>Auth: userId, role
+    Auth-->>API: Auth context
+
+    API->>UC: execute(request, authContext)
+    UC->>TxService: create(params, authContext.userId)
+
+    TxService->>TxService: validate params (amount, type, occurredAt)
+
+    TxService->>CatService: validateOwnership(categoryId, userId)
+    CatService->>CatRepo: findById(categoryId)
+    CatRepo->>DB: SELECT * FROM categories WHERE id = ? AND deleted = false
+    DB-->>CatRepo: category or null
+    CatRepo-->>CatService: category
+
+    alt category not found or not owned
+        CatService-->>TxService: error (CategoryNotFound/Forbidden)
+        TxService-->>UC: error
+        UC-->>API: error response
+        API-->>User: 404/403
+    else valid category
+        CatService-->>TxService: ok
+        TxService->>TxService: build Transaction entity
+        TxService->>TxRepo: create(transaction)
+        TxRepo->>DB: INSERT INTO transactions (...)
+        DB-->>TxRepo: inserted row (id)
+        TxRepo-->>TxService: transaction
+        TxService-->>UC: transaction
+        UC-->>API: response DTO
+        API-->>User: 201 Created (transaction)
+    end

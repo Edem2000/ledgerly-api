@@ -1,0 +1,43 @@
+sequenceDiagram
+    autonumber
+    actor User as Actor
+    participant API as TransactionController
+    participant Auth as JwtAuthGuard/RolesGuard
+    participant Presenter as SuggestCategoryPresenter
+    participant CurrentUser as CurrentUserProvider
+    participant UC as SuggestCategoryUsecase
+    participant CatService as CategoryService
+    participant CatRepo as CategoryRepository
+    participant DB as Database
+    participant LLM as LlmProvider
+
+    User->>API: POST /transactions/suggest-category (title)
+    API->>Auth: Validate JWT + role
+    Auth-->>API: Auth context
+
+    API->>CurrentUser: get()
+    CurrentUser-->>API: currentUser
+    API->>UC: execute({ title }, currentUser, context)
+
+    UC->>CatService: findAllByUser(userId)
+    CatService->>CatRepo: findAllByUser(userId)
+    CatRepo->>DB: SELECT * FROM categories WHERE user_id = ? AND deleted = false
+    DB-->>CatRepo: categories
+    CatRepo-->>CatService: categories
+    CatService-->>UC: categories
+
+    UC->>LLM: suggestCategories(title, existingCategories, maxSuggestions=3)
+    LLM-->>UC: suggestions
+    UC->>UC: normalize + de-duplicate + match existing
+    UC->>UC: fill remaining slots by usageCount/lastUsedAt
+
+    UC-->>API: suggestions
+    API->>Presenter: present(suggestions)
+    Presenter-->>API: response DTO
+    API-->>User: 200 OK (suggestions)
+
+    alt LLM error
+        LLM-->>UC: error
+        UC-->>API: error response
+        API-->>User: 400/502
+    end
